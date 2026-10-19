@@ -1,6 +1,6 @@
 ---
 name: dojo
-description: "DOJO: tutor persistente y adaptativo que enseña cualquier herramienta o disciplina técnica (el curriculum de cada dominio lo construye en la primera sesión) en katas de 15-20 min con presentaciones HTML oscuras, una mascota sensei, diagramas, cuestionarios deterministas y tareas verificables en la herramienta real. Usa este skill SIEMPRE que el usuario escriba /dojo, o pida aprender, practicar, estudiar, 'enséñame', 'explícame', 'clase', 'lección', 'kata', 'cinturón', 'quiz', 'cuestionario', 'repaso' o 'mi progreso' sobre Git, SQL, un lenguaje, un motor, una base de datos, Blender o cualquier dominio con un .dojo/ creado, aunque no diga la palabra dojo. También cuando quiera que la IA le enseñe en vez de generar el trabajo por él. Guarda todo en .dojo/ del directorio actual. Keywords: learn, teach me, tutor, study plan, spaced repetition, progress tracking, quiz me."
+description: 'Tutor persistente: enseña cualquier herramienta o disciplina técnica (Git, SQL, un lenguaje, un motor…) en katas de 15-20 min con presentación HTML, sensei pixel art, preguntas deterministas y tareas en la herramienta real; guarda el progreso en .dojo/. Triggers: /dojo, "enséñame", "explícame", "quiero aprender", practicar, clase, lección, kata, cinturón, quiz, repaso, "mi progreso", o una carpeta con .dojo/; learn, teach me, tutor, quiz me. Not for doing the work for the user: the dojo teaches.'
 ---
 
 # DOJO
