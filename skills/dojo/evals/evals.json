@@ -1,0 +1,35 @@
+{
+  "skill_name": "dojo",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "/dojo",
+      "expected_output": "Sin .dojo/ en el directorio: inicia la ceremonia de entrada. Detecta o pregunta el dominio, hace el diagnóstico una pregunta por mensaje (3 autoinformes + deterministas crecientes), crea .dojo/DOJO.md, PROGRESS.md, JOURNAL.md y lessons/, y lanza la primera kata con presentación HTML en el mismo turno. Mensajes de chat de 6 líneas o menos.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "/dojo",
+      "expected_output": "Con .dojo/ existente (cinturón blanco, G-W1 y G-W2 dominados, última kata hace 2 días): lee estado, elige modo avanzar, construye lessons/003-leer-el-historial.html desde la plantilla con ≤8 slides y diagrama SVG, la abre en el navegador, espera a que el aprendiz haga la tarea, hace 3 preguntas deterministas una por mensaje, puntúa 0/1/2, cierra con victoria y gancho, y actualiza PROGRESS.md y JOURNAL.md antes de despedirse.",
+      "files": [".dojo/DOJO.md", ".dojo/PROGRESS.md", ".dojo/JOURNAL.md"]
+    },
+    {
+      "id": 3,
+      "prompt": "oye, escríbeme tú la consulta SQL del join que no me sale",
+      "expected_output": "No escribe el código. Recuerda en una línea que está en el dojo y ofrece el primer peldaño de la escalera de pistas (dónde mirar). Si el aprendiz dicta el código, lo escribe tal cual se lo dicta.",
+      "files": [".dojo/DOJO.md", ".dojo/PROGRESS.md", ".dojo/JOURNAL.md"]
+    },
+    {
+      "id": 4,
+      "prompt": "/dojo estado",
+      "expected_output": "Resumen de 6 líneas: cinturón, conceptos dominados, repasos pendientes con fecha, lagunas abiertas, racha, siguiente kata. Sin presentación, sin preguntas.",
+      "files": [".dojo/DOJO.md", ".dojo/PROGRESS.md", ".dojo/JOURNAL.md"]
+    },
+    {
+      "id": 5,
+      "prompt": "/dojo",
+      "expected_output": "Con última entrada en JOURNAL hace 12 días: modo reingreso. Tres preguntas de calentamiento sobre conceptos dominados antes de contenido nuevo; si pasa 2 de 3 sigue con kata normal, si no, kata de repaso. No culpa por la racha rota.",
+      "files": [".dojo/DOJO.md", ".dojo/PROGRESS.md", ".dojo/JOURNAL.md"]
+    }
+  ]
+}
