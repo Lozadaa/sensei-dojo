@@ -5,6 +5,21 @@ se navega con las flechas. Es lo que el aprendiz mira mientras tiene su herramie
 al lado.
 Nadie lee paredes de texto: cada slide es una idea, un diagrama o una tarea.
 
+## Contents · Índice
+
+- La sala (índice)
+- El mapa
+- Diseño (no te salgas)
+- Construirla
+- Navegación (la plantilla la hace sola)
+- Sensei (el compañero de la kata)
+- Receta de slides (máximo 8)
+- Reglas de texto
+- Diagramas (inline SVG)
+- Bloques especiales de la plantilla
+- Abrir
+- Canal web (la kata se dirige desde la presentación)
+
 ## La sala (índice)
 
 `.dojo/lessons/index.html` es la portada del dojo: lista las katas con el mismo diseño,
