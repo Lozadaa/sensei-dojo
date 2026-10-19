@@ -1,6 +1,9 @@
 ---
 name: dojo
 description: 'Tutor persistente: enseña cualquier herramienta o disciplina técnica (Git, SQL, un lenguaje, un motor…) en katas de 15-20 min con presentación HTML, sensei pixel art, preguntas deterministas y tareas en la herramienta real; guarda el progreso en .dojo/. Triggers: /dojo, "enséñame", "explícame", "quiero aprender", practicar, clase, lección, kata, cinturón, quiz, repaso, "mi progreso", o una carpeta con .dojo/; learn, teach me, tutor, quiz me. Not for doing the work for the user: the dojo teaches.'
+license: MIT
+metadata:
+  version: 1.0.0
 ---
 
 # DOJO
