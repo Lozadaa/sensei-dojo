@@ -1,0 +1,15 @@
+{
+  "name": "sensei-dojo",
+  "description": "Sensei Dojo: a persistent tutor skill for Claude Code.",
+  "owner": {
+    "name": "Richard A. Lozada",
+    "url": "https://github.com/Lozadaa"
+  },
+  "plugins": [
+    {
+      "name": "sensei-dojo",
+      "source": "./",
+      "description": "A persistent tutor for Claude Code: katas, a pixel-art sensei and a skill tree, for any domain."
+    }
+  ]
+}

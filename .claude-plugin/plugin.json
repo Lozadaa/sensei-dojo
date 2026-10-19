@@ -1,0 +1,10 @@
+{
+  "name": "sensei-dojo",
+  "version": "1.0.0",
+  "description": "A persistent tutor for Claude Code: 15-20 minute katas with a pixel-art sensei, deterministic quizzes, real tasks in your tool and a skill tree that remembers you. Any domain.",
+  "author": { "name": "Richard A. Lozada", "url": "https://github.com/Lozadaa" },
+  "homepage": "https://github.com/Lozadaa/sensei-dojo",
+  "repository": "https://github.com/Lozadaa/sensei-dojo",
+  "license": "MIT",
+  "keywords": ["learning", "tutor", "katas", "spaced-repetition", "skill"]
+}
