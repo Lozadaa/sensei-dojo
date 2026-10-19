@@ -175,7 +175,7 @@ contenido vive en la presentación.
 
 Escribe estado con fechas absolutas (AAAA-MM-DD). Nunca borres JOURNAL; solo añades.
 
-## Referencias (léelas cuando toque)
+## Referencias y recursos (`references/`, `assets/`, `scripts/`; léelos cuando toque)
 
 - `references/pedagogia.md`: cómo se aprende una herramienta compleja (vale para
   cualquier dominio), diagnóstico, reglas de adaptación, escalera de pistas, formatos
@@ -201,6 +201,17 @@ Escribe estado con fechas absolutas (AAAA-MM-DD). Nunca borres JOURNAL; solo añ
 - `assets/mapa.html` + `scripts/mapa.py <.dojo/lessons>`: el mapa (stdlib; `--selfcheck`).
 - `scripts/serve.py <.dojo/lessons>`: servidor de las lecciones (puerto 8766) y canal
   con la presentación: `POST /signal` → signals.jsonl, `GET /feedback` ← feedback.jsonl.
+
+## Si algo falla (troubleshooting)
+
+| Síntoma | Causa | Qué haces |
+|---|---|---|
+| La página dice "Responde en el chat" o "Escribe /dojo en el chat" | No la sirve `serve.py` (`file://` o `http.server`) | Arranca `serve.py` (leccion.md § Abrir) y recarga; mientras, corrige en el chat |
+| `serve.py` no arranca: puerto 8766 ocupado | Un `http.server` viejo u otro dojo | Si `GET /feedback?since=0` responde un array, ya es `serve.py`: úsalo. Si no, páralo o usa `--port` |
+| "Parece que el sensei no está" o señales sin respuesta | El Monitor expiró | Lee `signals.jsonl` desde la última atendida, contéstalas en orden y rearma (leccion.md § Vigilante) |
+| Una corrección no aparece en la página | Línea rota en `feedback.jsonl` (llega como `null`) | Añade la línea otra vez como JSON válido de una línea; nunca edites ni vacíes el archivo |
+| `refresh.py` se para con «no encuentro …; no toco el archivo» | Esa kata perdió `<title>`, `.meta` o `<main id="deck">` | Restáuralo copiando la estructura de `assets/plantilla.html` y relánzalo |
+| El panel integrado no muestra la kata | No abre `file://`, o `preview_start` cogió otra configuración | Sirve con `serve.py` y `navigate` a `http://localhost:8766/`; en Windows abre el navegador con `Start-Process "<url>"` |
 
 ## Lo que NO hace el dojo
 
