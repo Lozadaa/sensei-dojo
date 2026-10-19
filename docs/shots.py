@@ -19,7 +19,7 @@ from playwright.sync_api import sync_playwright
 ROOT = Path(__file__).resolve().parent.parent
 PORT = 8791
 BASE = f"http://localhost:{PORT}/"
-KATA = BASE + "005-deshacer-sin-miedo.html"
+KATA = BASE + "005-undo-without-fear.html"
 
 DEMO = ROOT / "demo/.dojo"
 saved = {n: (DEMO / n).read_bytes() for n in ("signals.jsonl", "feedback.jsonl")}
@@ -50,8 +50,8 @@ try:
         shot(KATA + "#1", "kata-portada", wait=2600)
         shot(KATA + "#7", "kata-haz")
         def answer():
-            page.locator("[placeholder='Tu respuesta']:visible").first.fill("git restore --staged notas.txt")
-            page.get_by_role("button", name="Enviar").first.click()
+            page.locator("[placeholder='Your answer']:visible").first.fill("git restore --staged notes.txt")
+            page.get_by_role("button", name="Send").first.click()
             page.wait_for_timeout(1500)
             page.screenshot(path=str(ROOT / "docs/kata-corrigiendo.png"))  # el Sensei escribe la nota
             print("docs/kata-corrigiendo.png")
@@ -59,7 +59,7 @@ try:
         shot(KATA + "#8", "kata-demuestra", before=answer)
 
         def open_doubts():
-            page.get_by_role("button", name="Tengo una duda").first.click()
+            page.get_by_role("button", name="I have a question").first.click()
             page.wait_for_timeout(1200)
         shot(KATA + "#4", "kata-duda", before=open_doubts)
         shot(BASE + "mapa.html", "mapa", full=True)

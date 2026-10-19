@@ -15,6 +15,8 @@ import re
 import sys
 from pathlib import Path
 
+import idioma
+
 ASSETS = Path(__file__).resolve().parent.parent / "assets"
 BIG = '\n  <canvas class="sensei big" width="24" height="24"></canvas>'
 
@@ -88,11 +90,12 @@ def main():
     if len(args) != 1 or not Path(args[0]).is_dir():
         raise SystemExit(__doc__)
     folder = Path(args[0])
-    shell = (ASSETS / "plantilla.html").read_text(encoding="utf-8")
+    lang = idioma.lang_of(folder.parent)
+    shell = idioma.localize((ASSETS / "plantilla.html").read_text(encoding="utf-8"), "plantilla.html", lang)
     for p in sorted(folder.glob("[0-9][0-9][0-9]-*.html")):
         lesson(p, shell)
     if (folder / "index.html").exists():
-        index(folder / "index.html", (ASSETS / "index.html").read_text(encoding="utf-8"), saludo)
+        index(folder / "index.html", idioma.localize((ASSETS / "index.html").read_text(encoding="utf-8"), "index.html", lang), saludo)
     import mapa  # siempre al final: el mapa y la frase del porqué en la sala salen del estado guardado
     mapa.build(folder)
 

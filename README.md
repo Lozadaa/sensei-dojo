@@ -82,7 +82,7 @@ Requirements: Python 3.9+ (standard library only) and a browser.
 
 It also kicks in without the command: "teach me…", "quiz me", "I want to learn…", or opening Claude Code in a folder that already has `.dojo/`.
 
-> The commands and the lesson interface are in Spanish for now. The sensei talks to you in your own language.
+> The sensei talks to you in your language. Katas, the dojo home and the skill map come in English or Spanish (set by `- Idioma: en` in `.dojo/DOJO.md`, which the sensei fills in for you). Command arguments stay in Spanish.
 
 ## How a kata works
 

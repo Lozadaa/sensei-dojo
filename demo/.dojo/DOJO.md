@@ -3,22 +3,22 @@
 - Creado: 2026-10-14
 - Dominio: git
 - Herramienta/versión: Git 2.45
-- Proyecto base: practica-git (creado en la kata 01, junto a este `.dojo/`)
-- Idioma: es
+- Proyecto base: practice-git (created in kata 01, next to this `.dojo/`)
+- Idioma: en
 
 ## Aprendiz
-- Cinturón actual: amarillo (desde 2026-10-18)
-- Meta a 3 meses: "Trabajar en equipo con ramas y pull requests sin miedo a romper nada"
-- Meta → conceptos: G-O1, G-O3, G-O4   (equipo: remotos y pull requests; sin miedo: rebase con red)
-- Base previa: lee   (usa la terminal a diario, Git solo con botones del editor)
+- Cinturón actual: amarillo (since 2026-10-18)
+- Meta a 3 meses: "Work on a team with branches and pull requests without being afraid of breaking anything"
+- Meta → conceptos: G-O1, G-O3, G-O4   (team: remotes and pull requests; no fear: rebase with a safety net)
+- Base previa: lee   (uses the terminal daily, Git only through editor buttons)
 - Ritmo observado: normal
-- Formatos que le funcionan: diagramas de flujo con el paso de hoy en acento; predice antes de probar.
-- Energía típica: katas de 15 min por la noche
+- Formatos que le funcionan: flow diagrams with today's step highlighted; predict before trying.
+- Energía típica: 15-minute katas in the evening
 
 ## Reglas acordadas
-- El sensei no escribe código salvo dictado.
-- Kata de 15-20 min.
-- Primero la terminal; el botón equivalente del editor, al lado.
+- The sensei never writes code unless dictated.
+- 15-20 minute katas.
+- Terminal first; the matching editor button next to it.
 
 ## Malentendidos activos
-- (ninguno)
+- (none)

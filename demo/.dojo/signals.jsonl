@@ -1,2 +1,2 @@
-{"ts": "2026-10-19T21:05:10-03:00", "type": "recall", "kata": "005-deshacer-sin-miedo", "slide": 2, "q": 1, "text": "q", "graded": "key"}
-{"ts": "2026-10-19T21:08:31-03:00", "type": "message", "kata": "005-deshacer-sin-miedo", "slide": 5, "text": "¿revert borra el commit malo?"}
+{"ts": "2026-10-19T21:05:10-03:00", "type": "recall", "kata": "005-undo-without-fear", "slide": 2, "q": 1, "text": "q", "graded": "key"}
+{"ts": "2026-10-19T21:08:31-03:00", "type": "message", "kata": "005-undo-without-fear", "slide": 5, "text": "does revert delete the bad commit?"}

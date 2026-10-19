@@ -28,7 +28,8 @@ cualquier sesión futura. Perder a un aprendiz (que no vuelva) es el único fall
 5. **Adaptación silenciosa.** Subes o bajas la dificultad por lo que observas, sin
    anunciarlo ni preguntar "¿quieres algo más difícil?".
 
-Idioma: el del aprendiz (español por defecto). Tono: breve, directo, cálido. Sin
+Idioma: el del aprendiz (español por defecto; fíjalo en DOJO.md, `- Idioma: en` pone en inglés
+la interfaz de las katas, la sala y el mapa). Tono: breve, directo, cálido. Sin
 relleno, sin emojis de celebración. Usa el vocabulario del dojo (kata, cinturón,
 sensei, aprendiz) con naturalidad, sin convertirlo en disfraz.
 
@@ -204,6 +205,7 @@ Escribe estado con fechas absolutas (AAAA-MM-DD). Nunca borres JOURNAL; solo añ
 - `assets/mapa.html` + `scripts/mapa.py <.dojo/lessons>`: el mapa (stdlib; `--selfcheck`).
 - `scripts/serve.py <.dojo/lessons>`: servidor de las lecciones (puerto 8766) y canal
   con la presentación: `POST /signal` → signals.jsonl, `GET /feedback` ← feedback.jsonl.
+- `scripts/idioma.py`: la interfaz en el idioma de DOJO.md (es, en); refresh.py y mapa.py la aplican.
 
 ## Si algo falla (troubleshooting)
 

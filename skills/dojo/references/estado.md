@@ -14,7 +14,8 @@ editarlo a mano. Fechas siempre absolutas AAAA-MM-DD.
 - Proyecto base: <Nombre>    (dónde se hacen las katas; p. ej. un repo de práctica en
                               Git, la app de ejemplo de un framework, una base de
                               datos de muestra en SQL)
-- Idioma: es
+- Idioma: es                (es o en: idioma de la interfaz de katas, sala y mapa;
+                              el contenido lo escribes siempre en el idioma del aprendiz)
 
 ## Aprendiz
 - Cinturón actual: blanco

@@ -15,10 +15,15 @@ import re
 import sys
 from pathlib import Path
 
+import idioma
+
 SKILL = Path(__file__).resolve().parent.parent
 ASSETS = SKILL / "assets"
 ID = r"[A-Z]+-[A-Z0-9]+"
 DONE = ("dominado",)
+# en inglés, PROGRESS.md y curriculum.md siguen en español (es su formato): solo se traduce lo que se ve
+BELT_EN = {"blanco": "white", "amarillo": "yellow", "naranja": "orange", "verde": "green", "azul": "blue", "marrón": "brown", "negro": "black"}
+STATE_EN = {"nuevo": "new", "visto": "seen", "practicado": "practiced", "dominado": "mastered", "disponible": "available", "bloqueado": "locked"}
 STARTED = ("visto", "practicado")
 
 
@@ -79,7 +84,7 @@ def load(lessons):
     return {"belts": belts, "cs": cs, "katas": katas, "lagunas": lagunas, "dudas": dudas,
             "state": {k: v.get("estado", "nuevo").split(" (")[0] for k, v in prog.items()}, "prog": prog,
             "goal": goal.group(1) if goal else "", "anchors": re.findall(ID, anchors.group(1)) if anchors else [],
-            "domain": title.group(1).strip() if title else "", "belt": belt.group(1) if belt else ""}
+            "domain": title.group(1).strip() if title else "", "belt": belt.group(1) if belt else "", "lang": idioma.lang_of(dojo)}
 
 
 # ---------- cálculo ----------
@@ -118,12 +123,18 @@ def path(d):
     return out
 
 
-def names(ids, cs):
+def names(ids, cs, en=False):
     xs = [f"{i} {cs[i]['t']}" if i in cs else i for i in ids]
-    return xs[0] if len(xs) == 1 else ", ".join(xs[:-1]) + " y " + xs[-1]
+    return xs[0] if len(xs) == 1 else ", ".join(xs[:-1]) + (" and " if en else " y ") + xs[-1]
+
+
+def belt_name(d, b):
+    return BELT_EN.get(b, b) if d.get("lang") == "en" else b
 
 
 def why(d, cur, way):
+    if d.get("lang") == "en":
+        return why_en(d, cur, way)
     cs, st = d["cs"], d["state"]
     if not cur:
         one = "Has dominado todo el curriculum."
@@ -157,6 +168,43 @@ def why(d, cur, way):
         if D:
             parts.append(f"profundizar {len(D)} duda{'s' if len(D) > 1 else ''} ({', '.join(r['id'] for r in D)})")
         three = "El dojo te debe " + " y ".join(parts) + "."
+    return [one, two, three]
+
+
+def why_en(d, cur, way):
+    cs, st = d["cs"], d["state"]
+    if not cur:
+        one = "You have mastered the whole curriculum."
+    else:
+        c, pre = cs[cur], cs[cur]["prereq"]
+        if not pre:
+            one = f"You are on {cur} {c['t']} because it is where the curriculum starts."
+        else:
+            ok = [p for p in pre if st.get(p) in DONE]
+            one = (f"You are on {cur} {c['t']} because " +
+                   (f"it only depends on {names(pre, cs, True)}, which you have mastered." if len(pre) == 1 and ok else
+                    f"it depends on {names(pre, cs, True)}, which you have mastered." if len(ok) == len(pre) else
+                    f"it depends on {names(pre, cs, True)}; {names([p for p in pre if p not in ok], cs, True)} is still to master."))
+    goal = re.split(r"[,.;]", d["goal"])[0].strip()
+    if not d["anchors"]:
+        two = "No goal set yet: DOJO.md is missing its «Meta → conceptos» line."
+    elif not way:
+        two = "You have mastered everything your goal needs."
+    else:
+        two = f"{len(way)} katas to go for your goal" + (f" ({goal[0].lower() + goal[1:]})" if goal else "") + f": next is {way[0]} {cs[way[0]]['t']}"
+        belt = cs[cur]["belt"] if cur else None
+        out = next((w for w in way if cs[w]["belt"] != belt), None)
+        two += (f"; the first one past {belt_name(d, belt)} belt is {out} {cs[out]['t']}." if out and belt and out != way[0] else ".")
+    L, D = [r["id"] for r in d["lagunas"]], d["dudas"]
+    if not L and not D:
+        three = "No open gaps or questions."
+    else:
+        parts = []
+        if L:
+            parts.append(f"{len(L)} gap{'s' if len(L) > 1 else ''} ({', '.join(L)})")
+        if D:
+            parts.append(f"{len(D)} question{'s' if len(D) > 1 else ''} to dig into ({', '.join(r['id'] for r in D)})")
+        three = "The dojo owes you " + " and ".join(parts) + "."
     return [one, two, three]
 
 
@@ -266,7 +314,8 @@ def svg(d, cur, way):
         cls = ["node", s] + ([] if s != "nuevo" else ["open" if ready else "lock"])
         cls += (["way"] if cid in onway else []) + (["cur"] if cid == cur else []) + (["goal"] if cid in d["anchors"] else [])
         p = d["prog"].get(cid, {})
-        data = {"id": cid, "t": c["t"], "belt": c["belt"], "estado": s + ("" if s != "nuevo" else " · disponible" if ready else " · bloqueado"),
+        word = (lambda w: STATE_EN.get(w, w)) if d.get("lang") == "en" else (lambda w: w)
+        data = {"id": cid, "t": c["t"], "belt": belt_name(d, c["belt"]), "estado": word(s) + ("" if s != "nuevo" else " · " + word("disponible" if ready else "bloqueado")),
                 "puntaje": p.get("puntaje", "—"), "repaso": p.get("repaso", "—"), "prereq": ", ".join(c["prereq"]) or "—",
                 "lagunas": " · ".join(f"{r['id']} {r.get('lo que no supo', '')}" for r in d["lagunas"] if concept_of(d, r.get("concepto")) == cid),
                 "dudas": " · ".join(f"{r['id']} {r.get('acción', '')}" for r in dud.get(cid, [])),
@@ -281,7 +330,7 @@ def svg(d, cur, way):
         g.append(f'<path class="glyph" transform="translate({cx - 7} {cy - 7}) scale(2)" d="{glyph}"/>')
         tags = "".join(f'<tspan class="lagt"> · {l}</tspan>' for l in lag.get(cid, []))
         tags += '<tspan class="lagt"> · ?</tspan>' if any(r.get("acción", "").startswith("profundizar") for r in dud.get(cid, [])) else ""
-        tags += '<tspan class="tag"> · META</tspan>' if cid in d["anchors"] else ""
+        tags += f'<tspan class="tag"> · {"GOAL" if d.get("lang") == "en" else "META"}</tspan>' if cid in d["anchors"] else ""
         g.append(f'<text class="cid" x="{cx + R + 12}" y="{cy - 4}">{cid}{tags}</text>')
         for k, line in enumerate(wrap(c["t"])):
             g.append(f'<text class="ct" x="{cx + R + 12}" y="{cy + 13 + 17 * k}">{html.escape(line)}</text>')
@@ -292,25 +341,27 @@ def svg(d, cur, way):
 
 
 def falta(d, way):
-    cs = d["cs"]
+    cs, en = d["cs"], d.get("lang") == "en"
     if not way:
-        return '<p class="dim">Nada: tu meta está cubierta.</p>'
-    items = "".join(f'<li><code>{w}</code> {html.escape(cs[w]["t"])} <span>{cs[w]["belt"]}</span></li>' for w in way)
+        return f'<p class="dim">{"Nothing: your goal is covered." if en else "Nada: tu meta está cubierta."}</p>'
+    items = "".join(f'<li><code>{w}</code> {html.escape(cs[w]["t"])} <span>{belt_name(d, cs[w]["belt"])}</span></li>' for w in way)
     mins = len(way) * 15
-    return f'<ol class="falta">{items}</ol><p class="sum">{len(way)} katas, unas {mins // 60} h {mins % 60:02d} min.</p>'
+    about = f"{len(way)} katas, about {mins // 60} h {mins % 60:02d} min." if en else f"{len(way)} katas, unas {mins // 60} h {mins % 60:02d} min."
+    return f'<ol class="falta">{items}</ol><p class="sum">{about}</p>'
 
 
 def debe(d):
-    cs, out = d["cs"], []
+    cs, out, en = d["cs"], [], d.get("lang") == "en"
+    act = (lambda a: re.sub(r"^profundizar en", "dig into it in", re.sub(r"^gancho en", "hook in", a))) if en else (lambda a: a)
     for r in d["lagunas"]:
         c = concept_of(d, r.get("concepto"))
         out.append(f'<li><b>{r["id"]}</b> {html.escape(cs[c]["t"] if c in cs else r.get("concepto", ""))}: '
-                   f'{html.escape(r.get("lo que no supo", ""))} <span>próxima {html.escape(r.get("próxima", "—"))}</span></li>')
+                   f'{html.escape(r.get("lo que no supo", ""))} <span>{"next" if en else "próxima"} {html.escape(r.get("próxima", "—"))}</span></li>')
     for r in d["dudas"]:
         c = concept_of(d, r.get("concepto"))
         out.append(f'<li><b>{r["id"]}</b> {html.escape(cs[c]["t"] if c in cs else r.get("concepto", ""))}: '
-                   f'{html.escape(r.get("acción", ""))}</li>')
-    return f'<ul class="debe">{"".join(out)}</ul>' if out else '<p class="dim">Nada pendiente.</p>'
+                   f'{html.escape(act(r.get("acción", "")))}</li>')
+    return f'<ul class="debe">{"".join(out)}</ul>' if out else f'<p class="dim">{"Nothing pending." if en else "Nada pendiente."}</p>'
 
 
 def sensei_js():
@@ -328,8 +379,9 @@ def build(lessons):
     tree, perch, width = svg(d, cur, way)
     sensei = (f'<canvas class="sensei perchnode" width="24" height="24" data-size="24" style="left:{perch[0]}px;top:{perch[1]}px"></canvas>'
               if perch else "")
-    page = (ASSETS / "mapa.html").read_text(encoding="utf-8")
-    for k, v in {"{{DOMINIO}}": html.escape(d["domain"]), "{{CINTURON}}": html.escape(("Cinturón " + d["belt"]) if d["belt"] else ""),
+    page = idioma.localize((ASSETS / "mapa.html").read_text(encoding="utf-8"), "mapa.html", d["lang"])
+    belt = (f"{belt_name(d, d['belt']).capitalize()} belt" if d["lang"] == "en" else "Cinturón " + d["belt"]) if d["belt"] else ""
+    for k, v in {"{{DOMINIO}}": html.escape(d["domain"]), "{{CINTURON}}": html.escape(belt),
                  '"{{PORQUE1}}"': json.dumps(lines[0], ensure_ascii=False), "{{ANCHO}}": str(width)}.items():
         page = page.replace(k, v)
     page = (page.replace("<!-- MAPA -->", tree + "\n" + sensei)
@@ -365,6 +417,10 @@ def selfcheck():
     assert path(d) == ["T-A2", "T-A3", "T-B1", "T-B2"], path(d)
     w = why(d, "T-A2", path(d))
     assert "solo depende de T-A1 Uno" in w[0] and "Te faltan 4 katas" in w[1] and "T-B1 Cuatro" in w[1] and "L1" in w[2], w
+    d["lang"] = "en"
+    e = why(d, "T-A2", path(d))
+    assert "only depends on T-A1 Uno" in e[0] and "4 katas to go" in e[1] and "1 gap (L1)" in e[2], e
+    d["lang"] = "es"
     d["state"] = {"T-A1": "dominado", "T-A2": "dominado", "T-A3": "dominado"}
     assert actual(d) == "T-B1" and path(d) == ["T-B1", "T-B2"]   # todo lo visto dominado: el siguiente a avanzar
     assert table("| id | x |\n|---|---|\n| L1 | a |\n") == [{"id": "L1", "x": "a"}]

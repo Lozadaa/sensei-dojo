@@ -1,2 +1,2 @@
-{"ts": "2026-10-19T21:05:10-03:00", "kata": "005-deshacer-sin-miedo", "by": "key", "type": "grade", "slide": 2, "q": 1, "score": 2, "text": "q cierra el paginador.", "mood": "happy"}
-{"ts": "2026-10-19T21:08:40-03:00", "kata": "005-deshacer-sin-miedo", "type": "say", "channel": "duda", "text": "No: crea otro commit que lo deshace. El malo sigue en el historial, y por eso es seguro con lo ya subido.", "mood": "normal"}
+{"ts": "2026-10-19T21:05:10-03:00", "kata": "005-undo-without-fear", "by": "key", "type": "grade", "slide": 2, "q": 1, "score": 2, "text": "q closes the pager.", "mood": "happy"}
+{"ts": "2026-10-19T21:08:40-03:00", "kata": "005-undo-without-fear", "type": "say", "channel": "duda", "text": "No: it adds a commit that undoes it. The bad one stays in history, which is why it’s safe with what you already pushed.", "mood": "normal"}

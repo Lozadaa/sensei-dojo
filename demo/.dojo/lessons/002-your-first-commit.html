@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="es">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' shape-rendering='crispEdges'%3E%3Crect x='5' y='3' width='14' height='1' fill='%231c1c21'/%3E%3Crect x='4' y='4' width='16' height='16' fill='%231c1c21'/%3E%3Crect x='5' y='20' width='14' height='1' fill='%231c1c21'/%3E%3Crect x='6' y='4' width='12' height='1' fill='%232a2a30'/%3E%3Crect x='6' y='9' width='12' height='7' fill='%230a0a0b'/%3E%3Crect x='4' y='7' width='16' height='2' fill='%23d0432f'/%3E%3Crect x='20' y='7' width='2' height='1' fill='%23d0432f'/%3E%3Crect x='21' y='8' width='2' height='1' fill='%23d0432f'/%3E%3Crect x='7' y='11' width='4' height='3' fill='%23e9e4d8'/%3E%3Crect x='13' y='11' width='4' height='3' fill='%23e9e4d8'/%3E%3Crect x='8' y='12' width='2' height='2' fill='%230a0a0b'/%3E%3Crect x='14' y='12' width='2' height='2' fill='%230a0a0b'/%3E%3C/svg%3E">
-<title>Kata 03 · Leer el historial</title>
+<title>Kata 02 · Your first commit</title>
 <style>
   /* Diseño (leccion.md § Diseño), aprobado sobre docs/maquetas/actual. REJILLA: columna centrada =
      canal (64 px; 48 en móvil) + medida (880 px). Tres líneas: canal (borde izquierdo: números
@@ -441,7 +441,7 @@
 </head>
 <body>
 <div class="page">
-<header class="top seal"><canvas class="sensei" width="24" height="24" tabindex="0" role="button" title="Tócame" aria-label="Sensei: tócame para una pista"></canvas><a href="index.html" title="Volver a la sala (Esc)">Dojo</a><div class="meta">Cinturón blanco</div></header>
+<header class="top seal"><canvas class="sensei" width="24" height="24" tabindex="0" role="button" title="Touch me" aria-label="Sensei: touch me for a hint"></canvas><a href="index.html" title="Back to the dojo (Esc)">Dojo</a><div class="meta">White belt</div></header>
 
 <svg width="0" height="0" style="position:absolute">
   <defs>
@@ -455,61 +455,64 @@
 </svg>
 
 <main id="deck">
-<section class="slide cover" data-say="Antes de deshacer, hay que saber a dónde volver.">
+<section class="slide cover" data-say="Add picks. Commit saves.">
   <canvas class="sensei big" width="24" height="24"></canvas>
-  <div class="kata">Kata 03</div>
-  <h1>Leer el historial</h1>
+  <div class="kata">Kata 02</div>
+  <h1>Your first commit</h1>
   <div class="rule"></div>
-  <p class="lead">Al acabar sabrás encontrar cualquier commit y ver qué cambió.</p>
+  <p class="lead">By the end you’ll move a file from your folder into the history, in two steps.</p>
 </section>
 
-<section class="slide" data-say="HEAD es donde estás. El resto, contando hacia atrás.">
-  <h2>HEAD y sus <span class="k">antepasados</span></h2>
+<section class="slide" data-say="Three places. Today, the middle one.">
+  <h2>Add <span class="k">picks</span>, commit saves</h2>
 <svg class="dg" viewBox="0 0 880 96">
-  <rect class="box" x="0.5" y="0.5" width="271" height="95"/><text class="lbl l" x="16" y="37">HEAD~2</text><text class="note l" x="16" y="69">primera nota</text>
-  <line class="ln" x1="272" y1="48" x2="296" y2="48" marker-end="url(#arrow)"/>
-  <rect class="box" x="304.5" y="0.5" width="271" height="95"/><text class="lbl l" x="320" y="37">HEAD~1</text><text class="note l" x="320" y="69">segunda nota</text>
-  <line class="ln" x1="576" y1="48" x2="600" y2="48" marker-end="url(#arrow)"/>
-  <rect class="box hot" x="608.5" y="0.5" width="271" height="95"/><text class="lbl l" x="624" y="37">HEAD</text><text class="note l" x="624" y="69">el último: donde estás</text>
+  <rect class="box" x="0.5" y="0.5" width="195" height="95"/><text class="lbl l" x="16" y="37">Working tree</text><text class="note l" x="16" y="69">what you edit</text>
+  <line class="ln" x1="196" y1="48" x2="220" y2="48" marker-end="url(#arrow)"/>
+  <rect class="box hot" x="228.5" y="0.5" width="195" height="95"/><text class="lbl l" x="244" y="37">Staging</text><text class="note l" x="244" y="69">git add: what goes in</text>
+  <line class="ln" x1="424" y1="48" x2="448" y2="48" marker-end="url(#arrow)"/>
+  <rect class="box" x="456.5" y="0.5" width="195" height="95"/><text class="lbl l" x="472" y="37">Commit</text><text class="note l" x="472" y="69">git commit: the snapshot</text>
+  <line class="ln" x1="652" y1="48" x2="676" y2="48" marker-end="url(#arrow)"/>
+  <rect class="box" x="684.5" y="0.5" width="195" height="95"/><text class="lbl l" x="700" y="37">History</text><text class="note l" x="700" y="69">git log shows it</text>
 </svg>
-  <p class="lead"><code>git log --oneline</code> enseña un commit por línea. <code>HEAD~1</code> es el anterior al tuyo; <code>git show</code> enseña qué cambió.</p>
+  <p class="lead">Staging is the list of what goes into the next commit. Nothing reaches the history until you commit.</p>
 </section>
 
-<section class="slide do" data-say="Tres commits y una lectura." data-hints="git log abre un paginador, como less|Para salir del paginador hay una sola tecla, una letra|La letra es la inicial de quit">
-  <h2>Haz</h2>
+<section class="slide do" data-say="Two steps and a snapshot." data-hints="notes.txt first shows up as Untracked files|After add, look at the green heading in git status|Without -m, Git opens an editor: write the message, save and close">
+  <h2>Do</h2>
   <ol class="steps">
-      <li>Haz dos commits más en <code>notas.txt</code>.</li>
-      <li><code>git log</code>: baja con las flechas y sal.</li>
+      <li>Create <code>notes.txt</code> with one line.</li>
+      <li><code>git status</code>: under which heading is it?</li>
+      <li><code>git add notes.txt</code> and <code>git status</code> again.</li>
+      <li><code>git commit -m "first note"</code>.</li>
       <li><code>git log --oneline</code>.</li>
-      <li><code>git show HEAD~1</code>.</li>
-      <li>Pulsa «Ya lo hice».</li>
+      <li>Press «I did it».</li>
   </ol>
 </section>
 
-<section class="slide prove" data-say="Tres preguntas. Las acabas de vivir.">
-  <h2>Demuestra</h2>
-  <p class="dim">Una pregunta cada vez. El sensei corrige aquí.</p>
+<section class="slide prove" data-say="Three questions. You just lived them.">
+  <h2>Prove it</h2>
+  <p class="dim">One question at a time. The sensei grades right here.</p>
   <ol class="qs">
-    <li>¿Qué opción muestra un commit por línea?</li>
-    <li>¿Qué tecla cierra <code>git log</code>?</li>
-    <li>¿Cómo nombras el commit anterior a <code>HEAD</code>?</li>
+    <li>Which command stages <code>notes.txt</code>?</li>
+    <li>What heading does <code>git status</code> use for staged files?</li>
+    <li>After <code>git add</code>, is the file in the history yet?</li>
   </ol>
 </section>
 
-<section class="slide cover" data-say="Ya sabes dónde estás y de dónde vienes.">
+<section class="slide cover" data-say="Now you have a past. Tomorrow we read it.">
   <canvas class="sensei big" width="24" height="24"></canvas>
-  <div class="kata">Cierre</div>
-  <h1>Lees tu historial como un libro.</h1>
+  <div class="kata">Wrap-up</div>
+  <h1>Your first commit is in the history.</h1>
   <div class="rule"></div>
-  <p class="lead dim">Próxima: lo que Git no debe ver: .gitignore.</p>
+  <p class="lead dim">Next: reading the history without getting lost.</p>
 </section>
 </main>
 
-<nav class="nav" aria-label="Diapositivas">
-  <button class="arrow prev" id="prev" aria-label="Anterior" title="Anterior (←)"><svg viewBox="0 0 8 12" aria-hidden="true"><path d="M6 0h2v1H6zM5 1h2v1H5zM4 2h2v1H4zM3 3h2v1H3zM2 4h2v1H2zM1 5h2v1H1zM1 6h2v1H1zM2 7h2v1H2zM3 8h2v1H3zM4 9h2v1H4zM5 10h2v1H5zM6 11h2v1H6z"/></svg></button>
+<nav class="nav" aria-label="Slides">
+  <button class="arrow prev" id="prev" aria-label="Previous" title="Previous (←)"><svg viewBox="0 0 8 12" aria-hidden="true"><path d="M6 0h2v1H6zM5 1h2v1H5zM4 2h2v1H4zM3 3h2v1H3zM2 4h2v1H2zM1 5h2v1H1zM1 6h2v1H1zM2 7h2v1H2zM3 8h2v1H3zM4 9h2v1H4zM5 10h2v1H5zM6 11h2v1H6z"/></svg></button>
   <div class="dots" id="dots"></div>
   <span class="count" id="count"></span>
-  <button class="arrow next" id="next" aria-label="Siguiente" title="Siguiente (→)"><svg viewBox="0 0 8 12" aria-hidden="true"><path d="M0 0h2v1H0zM1 1h2v1H1zM2 2h2v1H2zM3 3h2v1H3zM4 4h2v1H4zM5 5h2v1H5zM5 6h2v1H5zM4 7h2v1H4zM3 8h2v1H3zM2 9h2v1H2zM1 10h2v1H1zM0 11h2v1H0z"/></svg></button>
+  <button class="arrow next" id="next" aria-label="Next" title="Next (→)"><svg viewBox="0 0 8 12" aria-hidden="true"><path d="M0 0h2v1H0zM1 1h2v1H1zM2 2h2v1H2zM3 3h2v1H3zM4 4h2v1H4zM5 5h2v1H5zM5 6h2v1H5zM4 7h2v1H4zM3 8h2v1H3zM2 9h2v1H2zM1 10h2v1H1zM0 11h2v1H0z"/></svg></button>
 </nav>
 </div>
 
@@ -722,16 +725,16 @@
   function line(k) {
     var s = slides[k];
     if (s.dataset.say !== undefined) return s.dataset.say;
-    if (k === last) return 'Bien hecho.';
-    if (s.classList.contains('cover')) return 'Vamos.';
-    if (s.querySelector('.recall')) return 'Intenta antes de revelar.';
-    if (s.classList.contains('do')) return 'Tu turno. Yo espero.';
-    if (s.classList.contains('prove')) return 'Aquí no hay pistas.';
+    if (k === last) return 'Well done.';
+    if (s.classList.contains('cover')) return 'Here we go.';
+    if (s.querySelector('.recall')) return 'Try before you reveal.';
+    if (s.classList.contains('do')) return 'Your turn. I’ll wait.';
+    if (s.classList.contains('prove')) return 'No hints here.';
     return '';
   }
   slides.forEach(function (s, k) {
     var d = document.createElement('button');
-    d.setAttribute('aria-label', 'Diapositiva ' + (k + 1));
+    d.setAttribute('aria-label', 'Slide ' + (k + 1));
     d.style.setProperty('--k', k);
     d.addEventListener('click', function () { show(k); });
     dots.appendChild(d);
@@ -787,7 +790,7 @@
       if (!t) return;
       freeze(b.closest('.slide'));
       t.classList.remove('hidden'); t.classList.add('shown'); b.classList.add('hidden');
-      mood('surprised', 1400); senseiSay('¿Lo tenías?');
+      mood('surprised', 1400); senseiSay('Did you have it?');
       var card = b.closest('.recall > div');
       if (card && card.form && card.form.dataset.state !== 'graded') done(card.form, false, 'revelada');
     });
@@ -826,7 +829,7 @@
   function loading(b) {
     b.disabled = true; b.textContent = ''; b.classList.remove('off', 'go', 'locked', 'sent'); b.classList.add('wait');
     b.appendChild(el('span', 'spin')).innerHTML = '<i></i><i></i><i></i><i></i>';
-    b.appendChild(document.createTextNode('Corrigiendo'));
+    b.appendChild(document.createTextNode('Grading'));
   }
   /* el Sensei escribe (pose write, pincel y bocadillo fijo "Escribiendo") mientras corrige una
      respuesta, contesta un mensaje o una petición de ayuda y prepara la siguiente kata. Se ve al menos
@@ -839,7 +842,7 @@
     if (on) {
       writeT0 = Date.now(); clearTimeout(timer); senseiMood('write');
       var d = el('span', 'beats'); d.innerHTML = '<i></i><i></i><i></i>';
-      if (!onlyDoubt()) senseiSay('Escribiendo', -1, d);  // una duda con el panel abierto: el "Escribiendo" va en el panel
+      if (!onlyDoubt()) senseiSay('Writing', -1, d);  // una duda con el panel abierto: el "Escribiendo" va en el panel
     } else { senseiSay(''); senseiMood(slideMood()); }
   }
   function onlyDoubt() { return talking && pend <= 0 && !waiting && doubt && doubt.isOpen(); }
@@ -847,7 +850,7 @@
     var left = writeOn ? 3000 - (Date.now() - writeT0) : 0;
     if (left > 0) setTimeout(fn, left); else fn();
   }
-  function failed(b, label) { b.disabled = false; b.textContent = label || 'Escribe /dojo en el chat'; b.classList.remove('go'); b.classList.add('off'); }
+  function failed(b, label) { b.disabled = false; b.textContent = label || 'Type /dojo in the chat'; b.classList.remove('go'); b.classList.add('off'); }
   /* lo que el sensei dice por el canal queda también escrito en el slide actual */
   function note(text, link) {
     var s = slides[i];
@@ -889,9 +892,9 @@
   /* responder en la página: Demuestra (answer) y tarjetas de Recuerda (recall); data-code="py|js|sql|sh|cs|cpp|ini|txt"
      en la pregunta o tarjeta pone un editor de código en vez de la caja de una línea */
   function answerForm(k, q, type, lang) {
-    var f = el('div', 'ans'), t = el('textarea'), b = button('Enviar', '', send), pre = null;
-    t.rows = 1; t.maxLength = lang ? 4000 : 1000; t.setAttribute('aria-label', 'Respuesta ' + q);
-    t.placeholder = lang ? 'Pega o escribe el código' : type === 'answer' ? 'Tu respuesta' : 'De memoria';
+    var f = el('div', 'ans'), t = el('textarea'), b = button('Send', '', send), pre = null;
+    t.rows = 1; t.maxLength = lang ? 4000 : 1000; t.setAttribute('aria-label', 'Answer ' + q);
+    t.placeholder = lang ? 'Paste or type the code' : type === 'answer' ? 'Your answer' : 'From memory';
     if (lang) {
       f.classList.add('code'); f.lang = lang;
       ['spellcheck', 'autocomplete', 'autocorrect', 'autocapitalize'].forEach(function (a) { t.setAttribute(a, 'off'); });
@@ -904,7 +907,7 @@
         // ponytail: colorea cada línea por separado; un /* */ de varias líneas solo se tiñe en la primera.
         pre.innerHTML = t.value ? t.value.replace(/\n$/, '').split('\n').map(function (l) {
           return '<span class="cl" style="--i:' + l.match(/^ */)[0].length + 'ch">' + (paint(l, lang) || ' ') + '</span>';
-        }).join('') : '<span class="c">Respondida</span>';
+        }).join('') : '<span class="c">Answered</span>';
         pre.scrollTop = 0;
       };
       f.lock = function (on) { f.classList.toggle('locked', on); f.repaint(); };
@@ -923,7 +926,7 @@
     t.addEventListener('keydown', function (e) { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); send(); } });
     function send() {
       var text = t.value.trim();
-      if (online === false) return done(f, false, 'en el chat');
+      if (online === false) return done(f, false, 'in the chat');
       if (f.dataset.state) return;
       if (!text) return t.focus();
       b.disabled = true; t.readOnly = true; if (f.lock) f.lock(true);
@@ -932,7 +935,7 @@
         var g = f.nextElementSibling;
         if (g && g.classList.contains('grade')) g.classList.add('wait');
         working();
-      }).catch(function () { t.readOnly = false; if (f.lock) f.lock(false); failed(b, 'Responde en el chat'); });
+      }).catch(function () { t.readOnly = false; if (f.lock) f.lock(false); failed(b, 'Answer in the chat'); });
     }
     if (!lang) f.appendChild(t);
     f.appendChild(b);
@@ -948,7 +951,7 @@
     if (!items.length) return;
     var seq = { items: items };
     items.forEach(function (it, n) {
-      var f = answerForm(k, n + 1, s === prove ? 'answer' : 'recall', it.dataset.code), of = el('span', 'of', (s === prove ? 'Pregunta ' : 'Recuerda ') + (n + 1) + ' de ' + items.length);
+      var f = answerForm(k, n + 1, s === prove ? 'answer' : 'recall', it.dataset.code), of = el('span', 'of', (s === prove ? 'Question ' : 'Recall ') + (n + 1) + ' of ' + items.length);
       f.item = it; f.seq = seq; it.form = f;
       if (s === prove) {
         var qt = el('span', 'qt');
@@ -960,7 +963,7 @@
         it.insertBefore(f, it.querySelector('.reveal'));
       }
       var more = n + 1 < items.length;
-      if (more || s === prove) it.nextBtn = it.appendChild(button(!more ? 'Ver el total' : s === prove ? 'Siguiente pregunta' : 'Siguiente tarjeta', 'go hold', function () {
+      if (more || s === prove) it.nextBtn = it.appendChild(button(!more ? 'See the total' : s === prove ? 'Next question' : 'Next card', 'go hold', function () {
         freeze(s); step(seq, true);
         if (!more) total(false, true);
       }));
@@ -994,7 +997,7 @@
     if (!it) return;
     if (label && !it.label) it.label = label;
     if (it.classList.contains('done')) return fold(it);  // corrección tardía de una ya plegada: actualiza su línea
-    if (quiet || label === 'en el chat') { fold(it); open(seq, !quiet); return; }
+    if (quiet || label === 'in the chat') { fold(it); open(seq, !quiet); return; }
     if (!it.nextBtn) return;  // la última tarjeta de Recuerda se queda abierta
     clearTimeout(seq.show);
     seq.show = setTimeout(function () {
@@ -1005,7 +1008,7 @@
   /* acertar se siente (sobrio): 2/2 pulso bermellón de 600 ms con la nota ya puesta, el
      Sensei del título hace la reverencia y los puntos parpadean una vez; 1/2 pulso corto y Sensei
      concentrado; 0/2 sin pulso, Sensei sorprendido y una frase que acompaña */
-  var wins = ['Limpio.', 'Eso es.', 'Sin dudar.'], lines = ['Ahora ya lo sabes. Vuelve mañana en Recuerda.', 'Casi. Mira la corrección.'];
+  var wins = ['Clean.', 'That’s it.', 'No hesitation.'], lines = ['Now you know. It comes back tomorrow in Recall.', 'Almost. Read the correction.'];
   var moods = ['surprised', 'focused', 'happy'], rmo = matchMedia('(prefers-reduced-motion: reduce)').matches;
   function react(box, b, s) {
     box.classList.remove('win', 'near'); void box.offsetWidth;
@@ -1026,10 +1029,10 @@
     if (f.dataset.state === 'sent') { pend--; working(); }
     if (!quiet) freeze(f.closest('.slide'));
     f.dataset.state = 'graded'; f.score = s;
-    t.readOnly = true; if (!t.value) t.placeholder = 'Respondida';
+    t.readOnly = true; if (!t.value) t.placeholder = 'Answered';
     if (document.activeElement === t) t.blur();
     if (f.lock) f.lock(true);  // el código queda entero, a su alto natural
-    sent(f.querySelector('button'), 'Corregida');
+    sent(f.querySelector('button'), 'Graded');
     var box = f.nextElementSibling && f.nextElementSibling.classList.contains('grade') ? f.nextElementSibling : f.parentNode.insertBefore(el('div', 'grade'), f.nextSibling);
     box.classList.remove('wait'); box.textContent = ''; box.appendChild(face(moods[s], 24));
     var b = box.appendChild(el('b', '', s + ' / 2'));  // la nota sale directa, sin contar
@@ -1061,7 +1064,7 @@
   function gate(open) {
     if (!nextBtn || waiting || nextBtn.classList.contains('sent')) return;
     nextBtn.disabled = !open;
-    nextBtn.textContent = open ? 'Siguiente kata' : 'Responde primero ' + (needed === 3 ? 'las tres' : 'las preguntas');
+    nextBtn.textContent = open ? 'Next kata' : 'Answer ' + (needed === 3 ? 'all three' : 'the questions') + ' first';
     nextBtn.classList.toggle('go', open); nextBtn.classList.toggle('locked', !open);
   }
 
@@ -1081,13 +1084,13 @@
 
   /* Ya lo hice, Siguiente kata: la página espera a que el sensei prepare la próxima (next_ready) */
   slides.forEach(function (s, k) {
-    if (s.classList.contains('do')) s.appendChild(button('Ya lo hice', '', function (b) {
+    if (s.classList.contains('do')) s.appendChild(button('I did it', '', function (b) {
       b.disabled = true;
-      post({ type: 'done' }).then(function () { sent(b, 'Enviado al sensei'); mood('happy', 1500); senseiSay('Bien. Ahora, Demuestra.', 5000); })
+      post({ type: 'done' }).then(function () { sent(b, 'Sent to the sensei'); mood('happy', 1500); senseiSay('Good. Now prove it.', 5000); })
         .catch(function () { failed(b); });
     }));
     if (k === last && s.classList.contains('cover')) {
-      nextBtn = s.appendChild(button('Siguiente kata', 'go', function (b) { awaitNext(b, 'next'); }));
+      nextBtn = s.appendChild(button('Next kata', 'go', function (b) { awaitNext(b, 'next'); }));
       if (prove) gate(false);
     }
   });
@@ -1095,7 +1098,7 @@
     b.disabled = true;
     post({ type: type }).then(function () {
       waiting = { b: b, t: setTimeout(nobody, 180000) };
-      busy(b, 'Preparando tu siguiente kata');
+      busy(b, 'Preparing your next kata');
       document.body.classList.add('waiting'); working();
     }).catch(function () { failed(b); });
   }
@@ -1107,9 +1110,9 @@
     return b;
   }
   function nobody() {
-    var b = stopWaiting(), m = 'Parece que el sensei no está. Escribe /dojo en el chat.';
+    var b = stopWaiting(), m = 'The sensei seems to be away. Type /dojo in the chat.';
     working();
-    b.disabled = false; b.textContent = 'Siguiente kata'; b.classList.add('go');
+    b.disabled = false; b.textContent = 'Next kata'; b.classList.add('go');
     mood('normal'); senseiSay(m, 8000); note(m);
   }
   function arrive(f) {
@@ -1117,15 +1120,15 @@
     if (!/^[\w.-]+\.html(#\d+)?$/.test(url)) return;  // solo lecciones de esta misma carpeta
     var b = stopWaiting();
     working();
-    if (b) sent(b, 'Vamos');
-    mood('happy'); senseiSay(f.title || 'Vamos.', 3000);
+    if (b) sent(b, 'Here we go');
+    mood('happy'); senseiSay(f.title || 'Here we go.', 3000);
     senseiBow(slides[i].querySelector('canvas.sensei.big') || document.querySelector('.seal canvas.sensei'));
     setTimeout(function () { location.href = url; }, 1200);
   }
   function end(f) {
-    var b = stopWaiting(), text = f.text || 'Por hoy, basta.', back = el('a', 'signal go', 'Volver a la sala');
+    var b = stopWaiting(), text = f.text || 'That’s enough for today.', back = el('a', 'signal go', 'Back to the dojo');
     working();
-    if (b) sent(b, 'Sesión cerrada');
+    if (b) sent(b, 'Session closed');
     back.href = 'index.html';
     mood('happy'); senseiSay(text, 8000); note(text, back);
   }
@@ -1136,16 +1139,16 @@
      GET /signals (los message de esta kata) y los say que llegaron desde la primera pregunta. */
   function doubts(o) {
     function mk(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text) e.textContent = text; return e; }
-    var btn = mk('button', 'doubt-btn', 'Tengo una duda'), panel = mk('aside', 'doubt'), head = mk('header'), cv = mk('canvas', 'sensei'), x = mk('button', 'x');
-    var log = mk('div', 'log'), off = mk('p', 'off', 'Escribe tu duda en el chat.'), form = mk('form', 'ask'), t = mk('textarea'), go = mk('button', 'signal go', 'Enviar');
+    var btn = mk('button', 'doubt-btn', 'I have a question'), panel = mk('aside', 'doubt'), head = mk('header'), cv = mk('canvas', 'sensei'), x = mk('button', 'x');
+    var log = mk('div', 'log'), off = mk('p', 'off', 'Type your question in the chat.'), form = mk('form', 'ask'), t = mk('textarea'), go = mk('button', 'signal go', 'Send');
     var msgs = [], says = [], first = null, waitRow = null;
-    btn.type = 'button'; btn.title = 'Pregunta al sensei (? o D)'; btn.setAttribute('aria-expanded', 'false');
-    panel.hidden = true; panel.setAttribute('aria-label', 'Pregunta al sensei');
+    btn.type = 'button'; btn.title = 'Ask the sensei (? or D)'; btn.setAttribute('aria-expanded', 'false');
+    panel.hidden = true; panel.setAttribute('aria-label', 'Ask the sensei');
     cv.width = cv.height = 24; cv.dataset.size = 48;
-    x.type = 'button'; x.setAttribute('aria-label', 'Cerrar (Esc)');
-    t.rows = 1; t.maxLength = 500; t.placeholder = 'Tu duda'; t.setAttribute('aria-label', 'Tu duda');
+    x.type = 'button'; x.setAttribute('aria-label', 'Close (Esc)');
+    t.rows = 1; t.maxLength = 500; t.placeholder = 'Your question'; t.setAttribute('aria-label', 'Your question');
     go.type = 'submit'; off.hidden = true;
-    head.appendChild(cv); head.appendChild(mk('h2', '', 'Pregunta al sensei')); head.appendChild(x);
+    head.appendChild(cv); head.appendChild(mk('h2', '', 'Ask the sensei')); head.appendChild(x);
     form.appendChild(t); form.appendChild(go);
     panel.appendChild(head); panel.appendChild(log); panel.appendChild(off); panel.appendChild(form);
     o.before.parentNode.insertBefore(btn, o.before);
@@ -1164,7 +1167,7 @@
         c.appendChild(f); c.appendChild(mk('span', 'who', 'Sensei')); c.appendChild(mk('p', '', it.text)); log.appendChild(c);
       });
       if (waitRow) log.appendChild(waitRow);
-      if (!log.children.length) log.appendChild(mk('p', 'hint', 'Pregunta lo que no te cuadre de esta kata. Te respondo aquí.'));
+      if (!log.children.length) log.appendChild(mk('p', 'hint', 'Ask anything in this kata that doesn’t add up. I’ll answer here.'));
       senseiScan(); log.scrollTop = log.scrollHeight;
     }
     function show(on) {
@@ -1183,7 +1186,7 @@
       go.disabled = true;
       o.send(text).then(function () {
         addMsg({ text: text }); t.value = ''; go.disabled = false;
-        waitRow = mk('p', 'wait', 'Escribiendo'); waitRow.appendChild(mk('span', 'beats')).innerHTML = '<i></i><i></i><i></i>';
+        waitRow = mk('p', 'wait', 'Writing'); waitRow.appendChild(mk('span', 'beats')).innerHTML = '<i></i><i></i><i></i>';
         paint(); t.focus();
       }).catch(function () { go.disabled = false; off.hidden = false; form.hidden = true; });
     });
@@ -1209,23 +1212,23 @@
     send: function (text) { return post({ type: 'message', text: text }).then(function () { talking = true; working(); }); } });
   /* tocar al Sensei: en Haz da la siguiente pista (peldaños 1-3) y luego ofrece pedir ayuda;
      en otro slide, ánimo (preguntar es el botón "Tengo una duda") */
-  var used = {}, helpBtn = {}, reread = {}, pool = ['Sigue.', 'Respira. Lee el slide otra vez.', 'Un paso a la vez.', 'Te sigo.'], lastPool = -1;
+  var used = {}, helpBtn = {}, reread = {}, pool = ['Keep going.', 'Breathe. Read the slide again.', 'One step at a time.', 'I’m with you.'], lastPool = -1;
   window.onSenseiTouch = function () {
     var s = slides[i], hints = s.classList.contains('do') && s.dataset.hints ? s.dataset.hints.split('|') : null;
     if (hints) {
       var n = used[i] || 0;
-      var hint = function (k) { return 'Pista ' + (k + 1) + ' de ' + hints.length + ' · ' + hints[k].trim(); };
+      var hint = function (k) { return 'Hint ' + (k + 1) + ' of ' + hints.length + ' · ' + hints[k].trim(); };
       if (n >= hints.length && (reread[i] = !reread[i])) return senseiSay(hint(hints.length - 1));  // agotadas: un toque relee la última
       if (n >= hints.length) {
-        helpBtn[i] = helpBtn[i] || button('Pedir ayuda al sensei', '', function (b) {
+        helpBtn[i] = helpBtn[i] || button('Ask the sensei for help', '', function (b) {
           b.disabled = true;
           post({ type: 'help', extra: { pistas: hints.length } })
-            .then(function () { sent(b, 'Enviado · espera aquí'); talking = true; working(); })
+            .then(function () { sent(b, 'Sent · wait here'); talking = true; working(); })
             .catch(function () { failed(b); });
         });
         var acts = el('div', 'acts'); acts.appendChild(helpBtn[i]);
-        acts.appendChild(button('Tengo una duda', '', function () { senseiSay(''); doubt.open(); }));
-        return senseiSay('Ya no hay más pistas aquí.', online ? 0 : 12000, acts);
+        acts.appendChild(button('I have a question', '', function () { senseiSay(''); doubt.open(); }));
+        return senseiSay('No more hints here.', online ? 0 : 12000, acts);
       }
       used[i] = n + 1;
       mood('focused', 8000);
@@ -1260,7 +1263,7 @@
     Object.keys(forms).forEach(function (k) {
       var b = forms[k].querySelector('button');
       forms[k].querySelector('textarea').disabled = true;
-      failed(b, 'Responde en el chat');
+      failed(b, 'Answer in the chat');
     });
     gate(true);
   }
@@ -1300,7 +1303,7 @@
     var t = (Date.now() - quiet) / 1000;
     if (stage === 0 && t >= idle) {
       stage = 1; senseiLook(2000);
-      if (!offered) { offered = true; senseiSay('¿Atascado? Tócame.', 5000); }
+      if (!offered) { offered = true; senseiSay('Stuck? Touch me.', 5000); }
     } else if (stage === 1 && t >= again) { stage = 2; senseiLook(2000); }
   }, 500);
   /* sangría colgante: si una línea de código no cabe, continúa bajo su propio nivel */

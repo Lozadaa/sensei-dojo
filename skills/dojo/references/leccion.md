@@ -88,7 +88,9 @@ final; `--saludo` no le afecta). No lo edites a mano: se rehace en cada GUARDAR.
 1. Copia `assets/plantilla.html` a `.dojo/lessons/NNN-slug.html`.
 2. Sustituye `{{KATA}}` (p. ej. `Kata 03`), `{{TITULO}}` y `{{CINTURON}}`.
 3. Sustituye el comentario `<!-- SLIDES -->` por tus `<section class="slide">`.
-4. Ábrela (ver § Abrir).
+4. Si `Idioma` en DOJO.md no es `es`, pásala por `python scripts/refresh.py .dojo/lessons`:
+   pone la interfaz (botones, panel de dudas, avisos) en ese idioma sin tocar tus slides.
+5. Ábrela (ver § Abrir).
 
 No edites la plantilla original. No añadas fuentes ni scripts externos: tiene que
 funcionar sin red y en cualquier navegador.
