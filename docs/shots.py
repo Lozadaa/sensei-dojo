@@ -9,6 +9,7 @@ feedback.jsonl del demo como estaban.
 """
 import subprocess
 import sys
+import threading
 import time
 import urllib.request
 from pathlib import Path
@@ -23,6 +24,16 @@ KATA = BASE + "005-undo-without-fear.html"
 
 DEMO = ROOT / "demo/.dojo"
 saved = {n: (DEMO / n).read_bytes() for n in ("signals.jsonl", "feedback.jsonl")}
+beat, live = DEMO / "sensei.alive", threading.Event()
+
+
+def heartbeat():  # como vigila.py: la página ve al sensei conectado mientras se capturan
+    while not live.wait(2):
+        beat.touch()
+
+
+beat.touch()
+threading.Thread(target=heartbeat, daemon=True).start()
 server = subprocess.Popen([sys.executable, str(ROOT / "skills/dojo/scripts/serve.py"),
                            str(ROOT / "demo/.dojo/lessons"), "--port", str(PORT)])
 try:
@@ -65,8 +76,10 @@ try:
         shot(BASE + "mapa.html", "mapa", full=True)
         b.close()
 finally:
+    live.set()
     server.terminate()
     server.wait()
+    beat.unlink(missing_ok=True)
     for n, b in saved.items():
         (DEMO / n).write_bytes(b)
 

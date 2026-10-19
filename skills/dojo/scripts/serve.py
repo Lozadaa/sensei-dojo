@@ -9,6 +9,8 @@ POST  /signal con JSON {type, kata, slide, q, text, extra}: añade una línea co
 GET   /feedback?since=N: las líneas de <carpeta .dojo>/feedback.jsonl desde la N
       (0 = primera) como array JSON; una línea ilegible llega como null para que los
       índices no se desplacen. Las escribe el sensei (references/leccion.md § Canal web).
+GET   /status: {"sensei": true|false, "age": s}. true si scripts/vigila.py (el Monitor del sensei)
+      tocó <carpeta .dojo>/sensei.alive hace menos de ALIVE s; la página lo enseña.
 GET   /signals?kata=K&since=N: solo lectura y solo las dudas (type message) de la kata K,
       como [{ts, slide, text}] desde la N; el panel "Tengo una duda" rehace con ellas su
       historial. Ningún otro tipo de señal sale por aquí.
@@ -24,6 +26,7 @@ import re
 import socket
 import sys
 import threading
+import time
 import unicodedata
 from datetime import datetime
 from functools import partial
@@ -75,6 +78,18 @@ def done_say(key):
     return None
 
 
+ALIVE = 12  # s sin latido para darlo por desconectado (vigila.py late cada 2 s)
+
+
+def status(path, now):
+    """¿Escucha el sensei? Según la edad del latido de vigila.py."""
+    try:
+        age = now - path.stat().st_mtime
+    except OSError:
+        return {"sensei": False, "age": None}
+    return {"sensei": age < ALIVE, "age": round(age)}
+
+
 def selfcheck():
     entry = {"full": [{"match": r"re:\badd\b[\s\S]*\bcommit\b", "text": "add y commit.", "mood": "happy"}, {"match": "add y commit"}],
              "partial": [{"match": r"re:^\s*(git\s+)?add\s*$", "text": "Falta commit."}], "wrong": {"text": "No.", "auto": True}}
@@ -88,6 +103,12 @@ def selfcheck():
     assert done_say({"done": {"text": "Bien. A Demuestra."}}) == ("Bien. A Demuestra.", "point")
     assert done_say({"done": {"text": "Hecho.", "mood": "happy"}}) == ("Hecho.", "happy")
     assert done_say({"questions": {}}) is None and done_say({"done": {}}) is None  # sin done: la IA
+    import tempfile
+    with tempfile.TemporaryDirectory() as d:
+        beat = Path(d) / "sensei.alive"
+        assert status(beat, time.time()) == {"sensei": False, "age": None}
+        beat.touch()
+        assert status(beat, time.time())["sensei"] and not status(beat, time.time() + ALIVE + 1)["sensei"]
     print("selfcheck ok")
 
 
@@ -173,6 +194,8 @@ class Dojo(SimpleHTTPRequestHandler):
 
     def do_GET(self):
         url = urlsplit(self.path)
+        if url.path == "/status":
+            return self.json(status(self.dojo / "sensei.alive", time.time()))
         if url.path not in ("/feedback", "/signals"):
             return super().do_GET()
         query = parse_qs(url.query)
@@ -187,7 +210,10 @@ class Dojo(SimpleHTTPRequestHandler):
             kata = query.get("kata", [""])[0]
             lines = [{"ts": l.get("ts"), "slide": l.get("slide"), "text": l.get("text")} for l in lines
                      if isinstance(l, dict) and l.get("type") == "message" and l.get("kata") == kata]
-        body = json.dumps(lines[since:], ensure_ascii=False).encode("utf-8")
+        self.json(lines[since:])
+
+    def json(self, data):
+        body = json.dumps(data, ensure_ascii=False).encode("utf-8")
         self.send_response(200)
         self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Content-Length", str(len(body)))

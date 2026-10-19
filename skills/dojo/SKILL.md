@@ -104,7 +104,8 @@ MOSTRAR     Construye la presentación (references/leccion.md) y ábrela en el n
             cada pregunta y tarjeta con todas las variantes razonables (full, partial, wrong)
             sacadas del curriculum, para que serve.py corrija al instante lo previsto. Deja
             construida la kata siguiente y ponla en "next": "Siguiente kata" será inmediato.
-CANAL       Mientras la kata esté abierta, Monitor sobre .dojo/signals.jsonl: reaccionas a
+CANAL       Mientras la kata esté abierta, Monitor con scripts/vigila.py (lee signals.jsonl
+            y late para que la página te vea conectado; leccion.md § Vigilante): reaccionas a
             cada señal sin esperar al chat, escribiendo en .dojo/feedback.jsonl (leccion.md
             § Canal web): answer/recall → grade · message/help → say con channel duda · done → say que
             invita a Demuestra (la key si trae done; si no, tú) · next/continue → GUARDAR, construir la siguiente kata (o el
@@ -204,7 +205,9 @@ Escribe estado con fechas absolutas (AAAA-MM-DD). Nunca borres JOURNAL; solo añ
   y en cada GUARDAR.
 - `assets/mapa.html` + `scripts/mapa.py <.dojo/lessons>`: el mapa (stdlib; `--selfcheck`).
 - `scripts/serve.py <.dojo/lessons>`: servidor de las lecciones (puerto 8766) y canal
-  con la presentación: `POST /signal` → signals.jsonl, `GET /feedback` ← feedback.jsonl.
+  con la presentación: `POST /signal` → signals.jsonl, `GET /feedback` ← feedback.jsonl,
+  `GET /status` (¿late el vigilante?).
+- `scripts/vigila.py <.dojo>`: el vigilante del Monitor; imprime las señales y late en `.dojo/sensei.alive`.
 - `scripts/idioma.py`: la interfaz en el idioma de DOJO.md (es, en); refresh.py y mapa.py la aplican.
 
 ## Si algo falla (troubleshooting)
@@ -213,7 +216,7 @@ Escribe estado con fechas absolutas (AAAA-MM-DD). Nunca borres JOURNAL; solo añ
 |---|---|---|
 | La página dice "Responde en el chat" o "Escribe /dojo en el chat" | No la sirve `serve.py` (`file://` o `http.server`) | Arranca `serve.py` (leccion.md § Abrir) y recarga; mientras, corrige en el chat |
 | `serve.py` no arranca: puerto 8766 ocupado | Un `http.server` viejo u otro dojo | Si `GET /feedback?since=0` responde un array, ya es `serve.py`: úsalo. Si no, páralo o usa `--port` |
-| "Parece que el sensei no está" o señales sin respuesta | El Monitor expiró | Lee `signals.jsonl` desde la última atendida, contéstalas en orden y rearma (leccion.md § Vigilante) |
+| «Sensei desconectado» (ojos X . X), "Parece que el sensei no está" o señales sin respuesta | El Monitor expiró o no es `vigila.py` | Lee `signals.jsonl` desde la última atendida, contéstalas en orden y rearma (leccion.md § Vigilante) |
 | Una corrección no aparece en la página | Línea rota en `feedback.jsonl` (llega como `null`) | Añade la línea otra vez como JSON válido de una línea; nunca edites ni vacíes el archivo |
 | `refresh.py` se para con «no encuentro …; no toco el archivo» | Esa kata perdió `<title>`, `.meta` o `<main id="deck">` | Restáuralo copiando la estructura de `assets/plantilla.html` y relánzalo |
 | El panel integrado no muestra la kata | No abre `file://`, o `preview_start` cogió otra configuración | Sirve con `serve.py` y `navigate` a `http://localhost:8766/`; en Windows abre el navegador con `Start-Process "<url>"` |

@@ -45,7 +45,7 @@
   .page { position: relative; height: 100%; margin: 0 auto; width: min(calc(100% - 48px), calc(var(--ch) + var(--col))); }
 
   /* barra superior: capuchón en el canal, "Dojo" en el eje, cinturón al borde */
-  .top { position: absolute; z-index: 5; top: 32px; left: 0; right: 0; height: 32px; display: grid; grid-template-columns: var(--ch) 1fr auto; align-items: center; }
+  .top { position: absolute; z-index: 5; top: 32px; left: 0; right: 0; height: 32px; display: grid; grid-template-columns: var(--ch) auto 1fr auto; align-items: center; }
   .top canvas.sensei { margin-left: -4px; }
   .top a, .meta, h3, .cover .kata, .count, .total, .qs .of, .recall .of, .recall .tag, .said .who {
     font: 12px/16px var(--serif); letter-spacing: .16em; text-transform: uppercase; color: var(--ink2);
@@ -53,6 +53,12 @@
   .top a { text-decoration: none; justify-self: start; }
   .top a:hover, .top a:focus-visible { color: var(--ink); outline: none; }
   .meta { margin-right: -.16em; }
+  /* ¿escucha el sensei? (GET /status): etiqueta siempre visible; desconectado en bermellón */
+  .link { justify-self: start; display: inline-flex; align-items: center; gap: 8px; margin: 0 0 0 24px; padding: 0; border: 0;
+          background: none; font: 12px/16px var(--serif); letter-spacing: .16em; text-transform: uppercase; color: var(--mute); cursor: default; }
+  .link::before { content: ""; width: 6px; height: 6px; background: currentColor; }
+  .link.off { color: var(--hot); cursor: help; }
+  .link.off:hover, .link.off:focus-visible { color: var(--ink); outline: none; }
   canvas.sensei { width: 24px; height: 24px; image-rendering: pixelated; display: block; }
 
   /* navegación: puntos desde el eje y contador al borde; flechas pixel a media altura */
@@ -595,6 +601,10 @@
     if (m === 'sleepy' && (rm || s % 2.4 > 1.2)) { r(19, 0, 4, 1, P.lid); r(21, 1, 1, 1, P.lid); r(20, 2, 1, 1, P.lid); r(19, 3, 4, 1, P.lid); }
     for (var i = 0; i < 2; i++) {
       var ex = i ? 13 : 7, ey = y + 8, cx = ex + 1 + gx;
+      if (window.senseiAway) {  // desconectado: ojos X . X (X de 3 px simétricas en la cara, punto abajo, separado de ambas)
+        var xx = i ? 14 : 7; r(xx, ey, 1, 1, P.eye); r(xx + 2, ey, 1, 1, P.eye); r(xx + 1, ey + 1, 1, 1, P.eye);
+        r(xx, ey + 2, 1, 1, P.eye); r(xx + 2, ey + 2, 1, 1, P.eye); if (i) r(11, ey + 2, 2, 1, P.eye); continue;
+      }
       if (m === 'happy' || bow) { r(ex + 1, ey, 2, 1, P.eye); r(ex, ey + 1, 1, 1, P.eye); r(ex + 3, ey + 1, 1, 1, P.eye); continue; }
       if (blink) { r(cx, ey + 2, 2, 1, P.lid); continue; }
       if (m === 'surprised') { r(ex, ey - 1, 4, 4, P.eye); r(ex + 1, ey, 2, 2, P.pupil); continue; }
@@ -625,6 +635,7 @@
   }
   function touch(e) {
     e.preventDefault(); e.stopPropagation();
+    if (window.senseiAwaySay && window.senseiAwaySay()) return;  // desconectado: lo explica en vez de la pista
     if (window.onSenseiTouch) window.onSenseiTouch();
   }
   function scan() {
@@ -1291,6 +1302,31 @@
       });
   }
   poll();
+  /* ¿escucha el sensei? GET /status cada 10 s: el latido de scripts/vigila.py (el Monitor). Sin
+     latido o sin servidor, el Sensei pone ojos X . X y la etiqueta lo dice; tocarlo o pasar por
+     encima explica qué hacer. Las respuestas previstas en la key se siguen corrigiendo. */
+  (function () {
+    var link = document.createElement('button'), AWAY = 'Disconnected: the sensei isn’t listening. Type /dojo in the chat to bring the sensei back.';
+    link.type = 'button'; link.className = 'link'; link.hidden = true;
+    document.querySelector('header.top .meta').before(link);
+    function explain() { if (window.senseiAway) { senseiSay(AWAY, 8000); return true; } return false; }
+    window.senseiAwaySay = explain;
+    link.addEventListener('mouseenter', explain); link.addEventListener('click', explain); link.addEventListener('focus', explain);
+    document.addEventListener('mouseover', function (e) { if (e.target.matches && e.target.matches('canvas.sensei') && !e.target.closest('.say')) explain(); });
+    function set(away) {
+      link.hidden = false;
+      if (window.senseiAway === away) return;
+      window.senseiAway = away;
+      link.classList.toggle('off', away);
+      link.textContent = away ? 'Sensei disconnected' : 'Sensei connected';
+      link.title = away ? 'The sensei isn’t listening: type /dojo in the chat' : 'The sensei is listening to this page';
+    }
+    function check() {
+      fetch('/status', { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : { sensei: false }; })
+        .then(function (s) { set(!s.sensei); }, function () { set(true); });
+    }
+    check(); setInterval(check, 10000);
+  })();
   /* inquietud en Haz: a los 45 s sin tecla ni clic mira a los lados y ofrece ayuda una vez;
      3 min después vuelve a mirar, sin hablar. ?idle=N acorta el primer plazo para probar. */
   var idle = parseFloat(new URLSearchParams(location.search).get('idle')) || 45;

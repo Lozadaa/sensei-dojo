@@ -298,6 +298,10 @@
     if (m === 'sleepy' && (rm || s % 2.4 > 1.2)) { r(19, 0, 4, 1, P.lid); r(21, 1, 1, 1, P.lid); r(20, 2, 1, 1, P.lid); r(19, 3, 4, 1, P.lid); }
     for (var i = 0; i < 2; i++) {
       var ex = i ? 13 : 7, ey = y + 8, cx = ex + 1 + gx;
+      if (window.senseiAway) {  // desconectado: ojos X . X (X de 3 px simétricas en la cara, punto abajo, separado de ambas)
+        var xx = i ? 14 : 7; r(xx, ey, 1, 1, P.eye); r(xx + 2, ey, 1, 1, P.eye); r(xx + 1, ey + 1, 1, 1, P.eye);
+        r(xx, ey + 2, 1, 1, P.eye); r(xx + 2, ey + 2, 1, 1, P.eye); if (i) r(11, ey + 2, 2, 1, P.eye); continue;
+      }
       if (m === 'happy' || bow) { r(ex + 1, ey, 2, 1, P.eye); r(ex, ey + 1, 1, 1, P.eye); r(ex + 3, ey + 1, 1, 1, P.eye); continue; }
       if (blink) { r(cx, ey + 2, 2, 1, P.lid); continue; }
       if (m === 'surprised') { r(ex, ey - 1, 4, 4, P.eye); r(ex + 1, ey, 2, 2, P.pupil); continue; }
@@ -324,6 +328,7 @@
   }
   function touch(e) {
     e.preventDefault(); e.stopPropagation();
+    if (window.senseiAwaySay && window.senseiAwaySay()) return;  // desconectado: lo explica en vez de la pista
     if (window.onSenseiTouch) window.onSenseiTouch();
   }
   function scan() {

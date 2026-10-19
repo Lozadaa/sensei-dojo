@@ -26,6 +26,12 @@ COMMON = [  # el panel «Tengo una duda» y la espera de la siguiente kata: igua
     ("'Cerrar (Esc)'", "'Close (Esc)'"),
     ("'Tu duda'", "'Your question'"),
     ("'Pregunta lo que no te cuadre de esta kata. Te respondo aquí.'", "'Ask anything in this kata that doesn’t add up. I’ll answer here.'"),
+    ("'Desconectado: el sensei no está escuchando. Escribe /dojo en el chat para que vuelva.'",
+     "'Disconnected: the sensei isn’t listening. Type /dojo in the chat to bring the sensei back.'"),
+    ("'Sensei desconectado'", "'Sensei disconnected'"),
+    ("'Sensei conectado'", "'Sensei connected'"),
+    ("'El sensei no escucha: escribe /dojo en el chat'", "'The sensei isn’t listening: type /dojo in the chat'"),
+    ("'El sensei escucha esta página'", "'The sensei is listening to this page'"),
 ]
 
 EN = {

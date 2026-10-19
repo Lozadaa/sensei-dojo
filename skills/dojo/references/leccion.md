@@ -458,7 +458,7 @@ anteriores a abrirla no se repiten.
 En MOSTRAR, justo después de abrir la presentación (o la sala al invocar), arma Monitor:
 
 ```
-Monitor  command: tail -n0 -F .dojo/signals.jsonl
+Monitor  command: python "<skill>/scripts/vigila.py" .dojo
          description: "señales del dojo"   timeout_ms: 1800000
 ```
 
@@ -467,6 +467,13 @@ esperar mensajes del chat y sin escribir en el chat más que una línea de estad
 falta. Al expirar, lee las líneas con `ts` posterior a la última atendida, atiéndelas y
 rearma, mientras haya una kata o la sala abierta. Si no hay Monitor, el aprendiz escribirá
 en el chat.
+
+`vigila.py` imprime cada señal nueva (como `tail -n0 -F`) y además toca `.dojo/sensei.alive`
+cada 2 s. `serve.py` lo publica en `GET /status` y la página lo comprueba cada 10 s: con
+latido, «Sensei conectado»; sin él (Monitor expirado, sesión cerrada o sin servidor), el
+Sensei pone ojos X . X, la etiqueta dice «Sensei desconectado» y al tocarla o pasar por
+encima explica que hay que escribir /dojo en el chat. Nunca uses `tail -F` como vigilante:
+la página te daría por desconectado.
 
 **Al invocar `/dojo`.** Arranca `serve.py` si no responde, arma el Monitor y abre la sala:
 ella dirige. Antes, lee `signals.jsonl`: son pendientes las líneas con `ts` posterior a la
