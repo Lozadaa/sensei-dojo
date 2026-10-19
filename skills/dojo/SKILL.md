@@ -66,7 +66,7 @@ Argumentos tras `/dojo` (todos opcionales):
    creciente; paras al segundo fallo seguido.
 3. Crea `.dojo/` con DOJO.md, PROGRESS.md, JOURNAL.md, REFUERZO.md y `lessons/`
    siguiendo `references/estado.md`. Lo que falló en el diagnóstico ya entra en
-   REFUERZO.md: son las primeras tarjetas. Crea también `.dojo/curriculum.md`
+   REFUERZO.md: son las primeras tarjetas. Crea también `curriculum.md` en `.dojo/`
    siguiendo `references/curriculum-nuevo-dominio.md` (tres cinturones completos, el
    resto solo títulos). Fija en DOJO.md la línea
    `Meta → conceptos` (3-6 anclas del curriculum que cumplen su meta): de ella sale el
@@ -159,19 +159,19 @@ contenido vive en la presentación.
 
 ## Archivos del dojo
 
-| Archivo | Contenido | Formato en |
+| Archivo en `.dojo/` | Contenido | Formato en |
 |---|---|---|
-| `.dojo/DOJO.md` | Dominio, fecha, perfil del aprendiz, reglas acordadas | `references/estado.md` |
-| `.dojo/PROGRESS.md` | Tabla de conceptos: estado, puntaje, próximo repaso | `references/estado.md` |
-| `.dojo/JOURNAL.md` | Diario append-only: cada kata, respuestas literales, malentendidos | `references/estado.md` |
-| `.dojo/REFUERZO.md` | Lagunas: lo que no supo, con su frase literal, hasta cerrarlas | `references/estado.md` |
-| `.dojo/DUDAS.md` | Todo lo que preguntó o no entendió, por concepto; decide qué profundizar en las katas siguientes | `references/estado.md` |
-| `.dojo/lessons/NNN-slug.html` | Presentación de cada kata; se puede reabrir | `references/leccion.md` |
-| `.dojo/lessons/index.html` | La sala: portada con la lista de katas; se actualiza con cada lección nueva | `references/leccion.md` |
-| `.dojo/lessons/mapa.html` | El mapa: curriculum como árbol de prerrequisitos con tu estado, el camino a la meta y el porqué; lo genera `scripts/mapa.py` (vía refresh.py) | `references/leccion.md` § El mapa |
-| `.dojo/curriculum.md` | El curriculum del dominio: cinturones, conceptos con prerrequisitos, preguntas con su respuesta | `references/curriculum-nuevo-dominio.md` |
-| `.dojo/signals.jsonl` | Lo que la presentación manda (botones, respuestas); lo escribe serve.py | `references/leccion.md` § Canal web |
-| `.dojo/feedback.jsonl` | Lo que respondes a la presentación (grade, say, next_ready, end); append-only | `references/leccion.md` § Canal web |
+| `DOJO.md` | Dominio, fecha, perfil del aprendiz, reglas acordadas | `references/estado.md` |
+| `PROGRESS.md` | Tabla de conceptos: estado, puntaje, próximo repaso | `references/estado.md` |
+| `JOURNAL.md` | Diario append-only: cada kata, respuestas literales, malentendidos | `references/estado.md` |
+| `REFUERZO.md` | Lagunas: lo que no supo, con su frase literal, hasta cerrarlas | `references/estado.md` |
+| `DUDAS.md` | Todo lo que preguntó o no entendió, por concepto; decide qué profundizar en las katas siguientes | `references/estado.md` |
+| `NNN-slug.html` (en `lessons/`) | Presentación de cada kata; se puede reabrir | `references/leccion.md` |
+| `index.html` (en `lessons/`) | La sala: portada con la lista de katas; se actualiza con cada lección nueva | `references/leccion.md` |
+| `mapa.html` (en `lessons/`) | El mapa: curriculum como árbol de prerrequisitos con tu estado, el camino a la meta y el porqué; lo genera `scripts/mapa.py` (vía refresh.py) | `references/leccion.md` § El mapa |
+| `curriculum.md` | El curriculum del dominio: cinturones, conceptos con prerrequisitos, preguntas con su respuesta | `references/curriculum-nuevo-dominio.md` |
+| `signals.jsonl` | Lo que la presentación manda (botones, respuestas); lo escribe serve.py | `references/leccion.md` § Canal web |
+| `feedback.jsonl` | Lo que respondes a la presentación (grade, say, next_ready, end); append-only | `references/leccion.md` § Canal web |
 
 Escribe estado con fechas absolutas (AAAA-MM-DD). Nunca borres JOURNAL; solo añades.
 
@@ -188,7 +188,7 @@ Escribe estado con fechas absolutas (AAAA-MM-DD). Nunca borres JOURNAL; solo añ
   espaciado. **Léela antes de crear o actualizar `.dojo/`.**
 - `references/leccion.md`: receta de slides, límites de palabras, diagramas SVG,
   cómo abrir la presentación. **Léela antes de construir cada presentación.**
-- `.dojo/curriculum.md`: cinturones blanco→negro, cada concepto con
+- `curriculum.md` (en `.dojo/`): cinturones blanco→negro, cada concepto con
   prerrequisitos, kata, diagrama sugerido, preguntas de prueba con respuesta y trampas.
   **Léelo para elegir la kata y para corregir.** Los skills técnicos del dominio que
   haya instalados y la documentación local son material de consulta si necesitas más
