@@ -1,0 +1,1360 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' shape-rendering='crispEdges'%3E%3Crect x='5' y='3' width='14' height='1' fill='%231c1c21'/%3E%3Crect x='4' y='4' width='16' height='16' fill='%231c1c21'/%3E%3Crect x='5' y='20' width='14' height='1' fill='%231c1c21'/%3E%3Crect x='6' y='4' width='12' height='1' fill='%232a2a30'/%3E%3Crect x='6' y='9' width='12' height='7' fill='%230a0a0b'/%3E%3Crect x='4' y='7' width='16' height='2' fill='%23d0432f'/%3E%3Crect x='20' y='7' width='2' height='1' fill='%23d0432f'/%3E%3Crect x='21' y='8' width='2' height='1' fill='%23d0432f'/%3E%3Crect x='7' y='11' width='4' height='3' fill='%23e9e4d8'/%3E%3Crect x='13' y='11' width='4' height='3' fill='%23e9e4d8'/%3E%3Crect x='8' y='12' width='2' height='2' fill='%230a0a0b'/%3E%3Crect x='14' y='12' width='2' height='2' fill='%230a0a0b'/%3E%3C/svg%3E">
+<title>Kata 02 · Tu primer commit</title>
+<style>
+  /* Diseño (leccion.md § Diseño), aprobado sobre docs/maquetas/actual. REJILLA: columna centrada =
+     canal (64 px; 48 en móvil) + medida (880 px). Tres líneas: canal (borde izquierdo: números
+     colgados, el Sensei del título), eje (canal + 64: marca, títulos, texto, cajas, botones,
+     diagramas, puntos) y borde derecho (cinturón, contador). El contenido empieza siempre en T,
+     nunca centrado. ESCALA: 64 · 40 · 28 · 18 · 14 · 12 (interlineado 72 · 48 · 36 · 28 · 20 · 16).
+     ESPACIOS: 8 · 16 · 24 · 32 · 48. Lenguaje pixel: sin radios, esquinas mordidas, iconos en
+     rejilla. Del Sensei se alinea lo visible: el capuchón empieza en la columna 4 de 24. */
+  :root {
+    --bg: #0a0a0b;
+    --bg2: #111113;
+    --ink: #e9e4d8;
+    --ink2: #9a948a;
+    --mute: #5c5852;
+    --line: #232326;
+    --hot: #d0432f;
+    --hot2: rgba(208, 67, 47, .14);
+    --paper: rgba(233, 228, 216, .6);
+    --serif: Georgia, "Noto Serif", "Times New Roman", serif;
+    --sans: "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
+    --mono: Consolas, ui-monospace, "Cascadia Mono", Menlo, monospace;
+    --ch: 64px;
+    --col: 880px;
+    --measure: 640px;
+    --T: clamp(112px, 19.2vh, 192px);
+    --foot: 96px;
+    /* esquina superior izquierda mordida: ::before tapa 3 píxeles con el fondo (--under) y pinta
+       el (1,1) con el borde. Con sombras de 1 px, que se ajustan al píxel (clip-path no). */
+    --under: var(--bg);
+    --i-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 7 7' shape-rendering='crispEdges'%3E%3Cpath d='M0 3h6v1H0zM4 1h1v1H4zM5 2h1v1H5zM6 3h1v1H6zM5 4h1v1H5zM4 5h1v1H4z'/%3E%3C/svg%3E");
+    --i-check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 7 7' shape-rendering='crispEdges'%3E%3Cpath d='M0 3h1v1H0zM1 4h1v1H1zM2 5h1v1H2zM3 4h1v1H3zM4 3h1v1H4zM5 2h1v1H5zM6 1h1v1H6z'/%3E%3C/svg%3E");
+    color-scheme: dark;
+  }
+  @media (max-width: 759px) { :root { --ch: 48px; --T: 144px; --foot: 80px; } }
+  * { box-sizing: border-box; border-radius: 0; }
+  html, body { height: 100%; margin: 0; }
+  body { background: var(--bg); color: var(--ink); font: 18px/28px var(--sans); overflow: hidden; }
+  .page { position: relative; height: 100%; margin: 0 auto; width: min(calc(100% - 48px), calc(var(--ch) + var(--col))); }
+
+  /* barra superior: capuchón en el canal, "Dojo" en el eje, cinturón al borde */
+  .top { position: absolute; z-index: 5; top: 32px; left: 0; right: 0; height: 32px; display: grid; grid-template-columns: var(--ch) 1fr auto; align-items: center; }
+  .top canvas.sensei { margin-left: -4px; }
+  .top a, .meta, h3, .cover .kata, .count, .total, .qs .of, .recall .of, .recall .tag, .said .who {
+    font: 12px/16px var(--serif); letter-spacing: .16em; text-transform: uppercase; color: var(--ink2);
+  }
+  .top a { text-decoration: none; justify-self: start; }
+  .top a:hover, .top a:focus-visible { color: var(--ink); outline: none; }
+  .meta { margin-right: -.16em; }
+  canvas.sensei { width: 24px; height: 24px; image-rendering: pixelated; display: block; }
+
+  /* navegación: puntos desde el eje y contador al borde; flechas pixel a media altura */
+  .nav { position: absolute; z-index: 6; left: var(--ch); right: 0; bottom: 26px; height: 44px; display: flex; align-items: center; justify-content: space-between; }
+  .arrow {
+    width: 48px; height: 88px; padding: 0; display: grid; place-items: center;
+    background: none; border: 0; cursor: pointer;
+    color: rgba(233, 228, 216, .45); transition: color .12s;
+  }
+  .arrow svg { width: 16px; height: 24px; fill: currentColor; shape-rendering: crispEdges; }
+  .arrow:hover, .arrow:focus-visible, .arrow:active, .arrow.hit { color: var(--hot); outline: none; }
+  .arrow.prev:active, .arrow.prev.hit { transform: translateX(-3px); }
+  .arrow.next:active, .arrow.next.hit { transform: translateX(3px); }
+  .arrow:disabled { color: rgba(233, 228, 216, .1); transform: none; cursor: default; }
+  .dots { display: flex; margin-right: auto; }
+  .dots button { height: 32px; padding: 0 8px 0 0; border: 0; background: none; cursor: pointer; display: flex; align-items: center; }
+  .dots button::before { content: ""; width: 8px; height: 8px; background: var(--line); transition: width .2s steps(4), background-color .2s; }
+  .dots button.seen::before { background: var(--mute); }
+  .dots button:hover::before { background: var(--ink2); }
+  .dots button[aria-current="step"]::before { width: 24px; background: var(--hot); }
+  .dots button:focus-visible { outline: 1px solid var(--hot); outline-offset: 2px; }
+  .count { color: var(--mute); margin-right: -.16em; }
+  @media (min-width: 760px) {
+    .arrow { position: fixed; top: calc(50% - 44px); }
+    .arrow.prev { left: 24px; }
+    .arrow.next { right: 24px; }
+  }
+  @media (max-width: 759px) {
+    .nav { left: 0; }
+    .arrow { width: var(--ch); height: 32px; place-items: center start; }
+    .arrow.next { order: 9; width: 48px; place-items: center end; }
+    .count { display: none; }
+    .dots { order: 1; }
+  }
+
+  /* slides: el contenido empieza en T, en el eje; lo que no cabe hace scroll dentro del slide */
+  /* el bloque se centra en vertical cuando cabe (safe center); si no cabe, empieza en T y hace
+     scroll. Lo que llega después (correcciones, notas, revelar) no lo mueve: el JS congela el
+     desplazamiento del slide abierto antes del cambio (freeze) y lo nuevo crece hacia abajo. */
+  .slide {
+    position: absolute; top: 96px; left: 0; right: 0; bottom: 96px;
+    padding: calc(var(--T) - 96px) 0 calc(var(--T) - 96px) var(--ch);
+    display: none; flex-direction: column; align-items: flex-start; justify-content: safe center;
+    overflow: hidden auto; animation: in .4s ease both;
+  }
+  .slide.on { display: flex; }
+  @keyframes in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .slide, .shown { animation: none !important; } .arrow, .dots button::before { transition: none; } }
+
+  /* ritmo: entre bloques 32 · etiqueta → título 8 · título → texto 24 */
+  .slide > * { margin: 0; flex: none; }
+  .slide > * + * { margin-top: 32px; }
+  .slide > h3 + *, .cover .kata + * { margin-top: 8px; }
+  .slide > h3 + svg.dg, .slide > h3 + div.recall { margin-top: 24px; }
+  .slide > h1 + *, .slide > h2 + *, .slide > .hrow + *, .cover .rule + * { margin-top: 24px; }
+
+  /* escala tipográfica */
+  h1, h2 { font-family: var(--serif); font-weight: 400; margin: 0; letter-spacing: -.01em; text-wrap: balance; }
+  h1 { font-size: 64px; line-height: 72px; max-width: 14em; }
+  h2 { font-size: 40px; line-height: 48px; max-width: var(--measure); }
+  h3 { margin: 0; }
+  @media (max-width: 759px) { h1 { font-size: 40px; line-height: 48px; } }
+  p { margin: 0; color: var(--ink); }
+  .slide > p { max-width: var(--measure); }
+  p.lead { font-size: 28px; line-height: 36px; text-wrap: pretty; }
+  @media (max-width: 759px) { p.lead { font-size: 18px; line-height: 28px; } }
+  .k { color: var(--hot); }
+  .dim { color: var(--ink2); }
+  b { font-weight: 600; }
+  kbd {
+    --bd: var(--line); position: relative; display: inline-block; vertical-align: 1px;
+    font: 14px/20px var(--mono); padding: 0 8px; border: 1px solid var(--bd); border-bottom-width: 2px;
+    background: var(--bg2); color: var(--ink);
+  }
+  code { font-family: var(--mono); font-size: inherit; color: var(--ink); overflow-wrap: anywhere; }
+  pre {
+    margin: 0; padding: 16px 24px; background: var(--bg2); border: 1px solid var(--line);
+    border-left: 2px solid var(--hot); overflow: auto; align-self: stretch;
+    font: 14px/20px var(--mono); color: var(--ink2);
+    white-space: pre-wrap; overflow-wrap: anywhere;
+  }
+  pre code { font-size: inherit; color: inherit; }
+  pre .cl { display: block; padding-left: calc(var(--i) + 2ch); text-indent: calc(-1 * (var(--i) + 2ch)); }
+  pre b { color: var(--ink); font-weight: 600; }
+
+  /* portada y cierre: el capuchón del Sensei grande cae en el eje */
+  .cover .kata { color: var(--hot); }
+  .cover .rule { width: 64px; height: 1px; background: var(--hot); }
+  .cover canvas.sensei.big { margin-left: calc(var(--s, 144px) / -6); }
+
+  /* título con el Sensei en el canal: misma altura (48) que la primera línea */
+  .hrow { position: relative; display: grid; grid-template-columns: var(--ch) minmax(0, 1fr); align-items: start; margin-left: calc(-1 * var(--ch)) !important; }
+  .hrow canvas.sensei { margin-left: -8px; }
+  .hrow h2 { margin: 0; }
+
+  /* lado a lado: dos columnas en la medida, 48 entre ellas */
+  .slide.split.on { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 48px; row-gap: 24px; align-content: safe center; max-width: calc(var(--ch) + var(--col)); }  /* centrado como el resto */
+  .split > * + * { margin-top: 0; }
+  .split > h2 { grid-column: 1 / -1; }
+  .split > div:not(.hrow) { min-width: 0; display: flex; flex-direction: column; gap: 16px; }  /* .hrow: título con su Sensei, no columna */
+  .split > div > h3 + * { margin-top: -8px; }
+  @media (max-width: 759px) { .slide.split.on { grid-template-columns: minmax(0, 1fr); } }
+  /* Haz con código (do split): título con su Sensei y mapa a todo el ancho; pasos a la izquierda y
+     el código a la derecha, en figuras por archivo. Por debajo de 1280 px se apilan: pasos, código. */
+  .split > .hrow, .split > svg.dg, .split > .said { grid-column: 1 / -1; }
+  .split > .signal { grid-column: 1; justify-self: start; }
+  .split > div > ol.steps { max-width: none; }
+  .split .code figure { margin: 0; display: flex; flex-direction: column; gap: 8px; }
+  .split .code figcaption { font: 12px/16px var(--serif); letter-spacing: .16em; text-transform: uppercase; color: var(--ink2); }
+  .split .code pre { align-self: stretch; }
+  .split .code pre .cl.lit { background: var(--hot2); box-shadow: -24px 0 var(--hot2), 24px 0 var(--hot2); }
+  @media (max-width: 1279px) { .slide.do.split.on { grid-template-columns: minmax(0, 1fr); } }
+
+  /* listas: el número cuelga en el canal con la misma línea base que el texto */
+  ol.steps, ol.qs { padding: 0; list-style: none; counter-reset: n; display: grid; gap: 16px; width: 100%; max-width: var(--measure); }
+  ol.steps li, ol.qs li { counter-increment: n; position: relative; padding: 0; }
+  ol.steps li::before, ol.qs li::before {
+    content: counter(n, decimal-leading-zero); position: absolute; left: calc(-1 * var(--ch)); top: 2px;
+    font: 14px/28px var(--sans); font-variant-numeric: tabular-nums; letter-spacing: .08em; color: var(--hot);
+  }
+
+  /* botones pixel: sin radio, borde papel, esquina mordida; enviado con check de 7×7 */
+  .reveal, .signal {
+    --bd: var(--paper);
+    position: relative; display: inline-flex; align-items: center; gap: 16px; height: 48px; padding: 0 24px;
+    background: transparent; color: var(--ink); cursor: pointer; text-decoration: none;
+    border: 1px solid var(--bd);
+    font: 14px/20px var(--sans); letter-spacing: .08em; white-space: nowrap;
+    transition: color .12s, border-color .12s, background-color .12s;
+  }
+  kbd::before, .reveal::before, .signal::before {
+    content: ""; position: absolute; left: -1px; top: -1px; width: 1px; height: 1px;
+    background: var(--under); box-shadow: 1px 0 var(--under), 0 1px var(--under), 1px 1px var(--bd);
+  }
+  div.recall > div, .say, .said { --under: var(--bg2); }
+  .reveal::after, .signal.go::after, .signal.sent::after {
+    content: ""; width: 14px; height: 14px; flex: none; background: currentColor;
+    -webkit-mask: var(--i-arrow) center / contain no-repeat; mask: var(--i-arrow) center / contain no-repeat;
+  }
+  .reveal:hover, .reveal:focus-visible, .signal:hover, .signal:focus-visible { --bd: var(--hot); color: var(--hot); background: var(--hot2); outline: none; }
+  .reveal:active, .signal:active { transform: translate(1px, 1px); }
+  .signal:disabled { cursor: progress; transform: none; }
+  .signal.off:not(:hover):not(:focus-visible) { --bd: var(--mute); color: var(--ink2); }
+  .signal.off::after { display: none; }
+  .signal.sent, .signal.sent:hover, .signal.locked, .signal.locked:hover, .signal.wait, .signal.wait:hover { --bd: var(--line); color: var(--ink2); background: none; cursor: default; }
+  .signal.locked { color: var(--mute); }
+  .signal.wait { cursor: progress; }
+  .signal.sent::after { background: var(--hot); -webkit-mask-image: var(--i-check); mask-image: var(--i-check); }
+  .signal.off:disabled { pointer-events: none; }
+  /* tres puntos pixel latiendo: corrigiendo, preparando */
+  .beats { display: inline-flex; gap: 3px; margin-left: -8px; }
+  .beats i { width: 3px; height: 3px; background: currentColor; animation: beat 1.2s steps(1) infinite; }
+  .beats i:nth-child(2) { animation-delay: .2s; }
+  .beats i:nth-child(3) { animation-delay: .4s; }
+  @keyframes beat { 50% { opacity: .2; } }
+  /* corrigiendo: cuatro cuadrados de 2 px que giran en escalera (600 ms por vuelta) */
+  .spin { position: relative; width: 8px; height: 8px; flex: none; }
+  .spin i { position: absolute; width: 2px; height: 2px; background: currentColor; opacity: .25; animation: spin .6s steps(1) infinite; }
+  .spin i:nth-child(1) { left: 0; top: 0; }
+  .spin i:nth-child(2) { left: 6px; top: 0; animation-delay: .15s; }
+  .spin i:nth-child(3) { left: 6px; top: 6px; animation-delay: .3s; }
+  .spin i:nth-child(4) { left: 0; top: 6px; animation-delay: .45s; }
+  @keyframes spin { 0% { opacity: 1; } 25% { opacity: .25; } }
+  @media (prefers-reduced-motion: reduce) {
+    .spin i:nth-child(2), .spin i:nth-child(4) { display: none; }
+    .spin i { animation: alt 1.6s steps(1) infinite; }
+    .spin i:nth-child(3) { animation-delay: .8s; }
+  }
+  @keyframes alt { 0% { opacity: 1; } 50% { opacity: .25; } }
+
+  /* responder en la página: caja en el eje, Enviar pegado a su derecha. El alto lo marca el
+     contenido en todo estado (vacía, escribiendo, enviada, corrigiendo, corregida): 1 línea vacía,
+     crece línea a línea hasta 16 y luego scroll interno. field-sizing: content; JS de respaldo. */
+  .ans { display: flex; gap: 8px; align-items: flex-start; width: 100%; max-width: var(--measure); margin-top: 24px; }
+  .ans textarea {
+    flex: 1 1 auto; min-width: 0; min-height: 48px; padding: 9px 16px; margin: 0;
+    background: var(--bg2); color: var(--ink); border: 1px solid var(--line);
+    font: 18px/28px var(--sans); transition: border-color .12s;
+  }
+  .ans textarea { flex-basis: 0; field-sizing: content; height: auto; max-height: calc(16 * 28px + 20px); resize: none; overflow-y: auto; scrollbar-width: thin; }
+  .ans .signal { flex: none; width: 216px; justify-content: center; }
+  @media (max-width: 559px) { .ans { flex-wrap: wrap; } .ans textarea { flex-basis: 100%; } .ans .signal { width: 100%; } }
+  /* data-code: editor de 3 líneas vacío que crece hasta 16; el pre de debajo colorea y el textarea
+     transparente escribe encima, al píxel. Enviada o corregida, el textarea se va y queda el pre en
+     el flujo, a su alto natural, con sangría colgante. El botón va debajo, a la derecha. */
+  .ans.code { flex-wrap: wrap; justify-content: flex-end; }
+  .ed { position: relative; flex: 1 1 100%; min-width: 0; }
+  .ed pre, .ans .ed textarea {
+    margin: 0; padding: 13px 16px; border: 1px solid var(--line); border-left-width: 2px; background: var(--bg2);
+    font: 14px/20px var(--mono); letter-spacing: 0; tab-size: 2; white-space: pre-wrap; overflow-wrap: anywhere;
+    scrollbar-gutter: stable; box-sizing: border-box; width: 100%; text-indent: 0;
+  }
+  .ed pre { position: absolute; inset: 0; overflow: hidden; pointer-events: none; color: var(--ink2); border-left-color: var(--hot); }
+  .ans .ed textarea {
+    position: relative; display: block; flex: none; field-sizing: content; height: auto; min-height: 88px; max-height: 348px;
+    background: transparent; color: transparent; caret-color: var(--ink); border-color: transparent; overflow-y: auto;
+  }
+  .ans .ed textarea:read-only, .ans .ed textarea:focus { color: transparent; border-color: transparent; }
+  .ed:focus-within pre { border-color: var(--hot); }
+  .ed textarea::selection { background: rgba(208, 67, 47, .35); color: transparent; }
+  .ans.code.locked .ed textarea { display: none; }
+  .ans.code.locked .ed pre { position: static; min-height: 88px; max-height: 348px; overflow-y: auto; pointer-events: auto; scrollbar-width: thin; border-color: var(--line); border-left-color: var(--hot); }
+  .ed .c, pre[data-code] .c { color: var(--mute); font-style: italic; }
+  .ed .s, pre[data-code] .s { color: var(--hot); }
+  .ed .k, .ed .n, pre[data-code] .k, pre[data-code] .n { color: #d8c49e; }
+  .ed .t, pre[data-code] .t { color: var(--ink); }
+  .ed .i, pre[data-code] .i { color: #c4bdb0; }
+  .ans textarea::placeholder { color: var(--mute); }
+  .ans textarea:focus { outline: none; border-color: var(--hot); }
+  .ans textarea:read-only { color: var(--ink2); }
+  .ans textarea:disabled { opacity: .45; }
+  /* la corrección tiene su hueco reservado desde el principio: al llegar no empuja nada */
+  .grade {
+    display: grid; grid-template-columns: auto auto 1fr; column-gap: 16px; align-items: center;
+    width: 100%; max-width: var(--measure); height: 72px; margin-top: 8px; padding: 0 16px;
+    border-left: 2px solid var(--hot); background: none;
+  }
+  .grade.win { animation: hit .6s ease-out both; }
+  .grade.near { animation: hit .3s ease-out both; }
+  @keyframes hit { from { background-color: rgba(208, 67, 47, .28); } to { background-color: transparent; } }
+  .grade > * { animation: fade .3s ease both; }
+  .grade:not(.on) { visibility: hidden; }
+  /* mientras corrige: el hueco de la nota muestra una línea de 1 px que avanza en bucle */
+  .grade.wait { visibility: visible; position: relative; overflow: hidden; border-left-color: transparent; }
+  .grade.wait::before, .grade.wait::after { content: ""; position: absolute; left: 0; top: 0; height: 1px; }
+  .grade.wait::before { right: 0; background: var(--line); }
+  .grade.wait::after { width: 25%; background: var(--ink2); animation: sweep 1.2s linear infinite; }
+  @keyframes sweep { from { transform: translateX(-100%); } to { transform: translateX(400%); } }
+  @media (prefers-reduced-motion: reduce) { .grade.wait::after { display: none; } }
+  .grade b { font: 28px/36px var(--serif); color: var(--hot); white-space: nowrap; font-weight: 400; }
+  .grade span { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  @media (max-width: 559px) { .grade { height: 104px; } .grade span { -webkit-line-clamp: 3; } }
+  .total { display: flex; align-items: baseline; gap: 16px; height: 48px; visibility: hidden; opacity: 0; transition: opacity .3s; }
+  .total.on { visibility: visible; opacity: 1; }
+  .total b { position: relative; font: 40px/48px var(--serif); color: var(--hot); font-weight: 400; letter-spacing: 0; }
+  .total.win b::after { content: ""; position: absolute; left: 0; right: 0; bottom: -4px; height: 2px; background: var(--hot); transform-origin: left; animation: draw .6s steps(8) .2s both; }
+  @keyframes draw { from { transform: scaleX(0); } }
+  .dots.blink button::before { animation: blink .5s steps(1) 1; }
+  @keyframes blink { 50% { background: var(--hot); } }
+  @media (prefers-reduced-motion: reduce) { .grade.win, .grade.near, .total.win b::after, .dots.blink button::before { animation: none; } }
+  /* lo que dice el sensei por el canal: su cara en el canal de la nota, texto en el eje */
+  .said {
+    width: 100%; max-width: var(--measure); display: grid; grid-template-columns: auto 1fr;
+    gap: 0 16px; align-items: start; padding: 16px 24px 16px 16px; border: 1px solid var(--line);
+    border-left: 2px solid var(--hot); background: var(--bg2); animation: fade .3s ease both;
+  }
+  .said canvas.sensei { grid-row: 1 / span 3; cursor: default; }
+  .said .who { color: var(--hot); }
+  .said p { margin: 0; font-size: 18px; line-height: 28px; color: var(--ink); max-width: 56ch; }
+  .said .signal { margin-top: 8px; justify-self: start; }
+  @keyframes fade { from { opacity: 0; } }
+  .acts { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+  /* recuerda: la caja va en el eje de la pregunta de su tarjeta */
+  .recall .ans { margin-top: 0; flex-wrap: wrap; }
+  .recall .ans textarea { flex-basis: 120px; }
+  .recall .grade { display: none; height: auto; margin-top: 0; padding: 8px 16px; }
+  .recall .grade.on { display: grid; visibility: visible; }
+  .recall .grade span { -webkit-line-clamp: 5; }
+  /* una pregunta por vez: solo la activa a la vista; las hechas, plegadas arriba a una línea */
+  .qs > li.later, .recall > div.later { display: none; }
+  .qs > li.now::before { content: none; }
+  .qs .of, .recall .of { display: block; color: var(--hot); }
+  .recall .tag .of { display: inline; }
+  .qs .qt { display: block; margin-top: 8px; font-size: 28px; line-height: 36px; text-wrap: pretty; }
+  .qs li > .signal { margin-top: 16px; }
+  .signal.hold { visibility: hidden; }
+  .recall .signal.hold { display: none; }
+  .sum code { font: 14px/20px var(--mono); color: var(--ink2); }
+  ol.qs { gap: 0; }
+  ol.qs > li.done, div.recall > div.done { display: block; padding: 4px 0; border: 0; background: none; font-size: 14px; line-height: 20px; color: var(--ink2); }
+  .done > :not(.sum) { display: none !important; }
+  .sum { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .now > .sum { display: none; }
+  .sum b { font-weight: 400; color: var(--hot); }
+  ol.qs > li.done::before { font-size: 14px; line-height: 20px; top: 4px; }
+  .slide div.recall { grid-template-columns: minmax(0, 1fr); width: 100%; max-width: var(--measure); gap: 0; counter-reset: c; }
+  ol.qs > li, div.recall > div { min-width: 0; }
+  div.recall > div { counter-increment: c; position: relative; }
+  div.recall > div.done::before { content: counter(c, decimal-leading-zero); position: absolute; left: calc(-1 * var(--ch)); top: 4px; font: 14px/20px var(--sans); color: var(--hot); letter-spacing: .08em; font-variant-numeric: tabular-nums; }
+  /* lo hecho queda arriba, separado por un filete de lo que toca */
+  .done + .now { margin-top: 16px; padding-top: 24px; border-top: 1px solid var(--line); }
+  div.recall > .done + .now { border-top: 1px solid var(--line); }
+  /* esperando al sensei: los puntos laten en ola; con las tres corregidas, la flecha da un pulso */
+  body.waiting .dots button::before { animation: beat 1.4s steps(1) infinite; animation-delay: calc(var(--k, 0) * 110ms); }
+  .arrow.pulse { animation: pulse 1s step-end 3; }
+  @keyframes pulse { 50% { color: var(--hot); transform: translateX(3px); } }
+  @media (prefers-reduced-motion: reduce) { body.waiting .dots button::before, .arrow.pulse, .said, .beats i { animation: none; } }
+  .hidden { display: none !important; }
+  .shown { display: block; padding: 16px 24px; border-left: 2px solid var(--hot); background: var(--hot2); animation: in .3s ease both; }
+
+  /* recuerda: tarjetas de recuerdo activo, una a la vez */
+  div.recall { display: grid; gap: 16px; }
+  div.recall > div { border: 1px solid var(--line); background: var(--bg2); padding: 24px; display: grid; gap: 16px; align-content: start; justify-items: start; }
+  .recall .shown { margin: 0; padding: 8px 16px; justify-self: stretch; }
+  .recall .tag { color: var(--mute); }
+  .recall .tag + p { margin-top: -8px; }
+
+  /* diagramas: en el eje, a su tamaño natural (el JS fija el ancho del viewBox: el texto no escala) */
+  svg.dg { display: block; max-width: 100%; height: auto; overflow: visible; }
+  .dg rect { rx: 0; ry: 0; }
+  .dg .box { fill: var(--bg2); stroke: var(--ink2); stroke-width: 1; }
+  .dg .box.hot { fill: var(--hot2); stroke: var(--hot); }
+  .dg .box.ghost { fill: none; stroke: var(--mute); stroke-dasharray: 4 4; }
+  .dg .lbl { fill: var(--ink); font: 14px var(--sans); text-anchor: middle; }
+  .dg .lbl.sm { font-size: 14px; }
+  .dg .note { fill: var(--ink2); font: 14px var(--sans); text-anchor: middle; }
+  .dg .l { text-anchor: start; }
+  .dg .path { font-family: var(--mono); }
+  .dg .hd { fill: var(--ink2); font: 12px var(--serif); letter-spacing: .16em; text-anchor: start; }
+  .dg .hd.hot { fill: var(--hot); }
+  .dg .ln { stroke: var(--ink2); stroke-width: 1; fill: none; }
+  .dg .ln.hot { stroke: var(--hot); stroke-width: 2; }
+  .dg .ln.dash { stroke-dasharray: 4 4; }
+  .dg .frame { fill: none; stroke: var(--line); stroke-width: 1; }
+
+  /* bocadillo del Sensei: sin radio, sombra dura y cola en escalera hacia el Sensei */
+  canvas.sensei { cursor: pointer; }
+  canvas.sensei:focus-visible { outline: 1px solid var(--hot); outline-offset: 3px; }
+  .say {
+    position: fixed; z-index: 8; width: max-content; max-width: 480px; text-wrap: balance; padding: 8px 16px;
+    background: var(--bg2); color: var(--ink); border: 1px solid var(--line);
+    font: 14px/20px var(--serif); box-shadow: 4px 4px 0 rgba(0, 0, 0, .55);
+    opacity: 0; transform: translateY(4px); pointer-events: none; transition: opacity .16s, transform .16s;
+  }
+  .say.on { opacity: 1; transform: none; pointer-events: auto; cursor: pointer; }
+  .say::before, .say::after { content: ""; position: absolute; }
+  .say::before { background: var(--line); }
+  .say::after { background: var(--bg2); }
+  .say.below::before { top: -6px; left: var(--tail, 10px); width: 10px; height: 5px; clip-path: polygon(4px 0, 6px 0, 6px 1px, 7px 1px, 7px 2px, 8px 2px, 8px 3px, 9px 3px, 9px 4px, 10px 4px, 10px 5px, 0 5px, 0 4px, 1px 4px, 1px 3px, 2px 3px, 2px 2px, 3px 2px, 3px 1px, 4px 1px); }
+  .say.below::after { top: -5px; left: calc(var(--tail, 10px) + 1px); width: 8px; height: 5px; clip-path: polygon(3px 0, 5px 0, 5px 1px, 6px 1px, 6px 2px, 7px 2px, 7px 3px, 8px 3px, 8px 5px, 0 5px, 0 3px, 1px 3px, 1px 2px, 2px 2px, 2px 1px, 3px 1px); }
+  .say.above::before { bottom: -6px; left: var(--tail, 10px); width: 10px; height: 5px; clip-path: polygon(0 0, 10px 0, 10px 1px, 9px 1px, 9px 2px, 8px 2px, 8px 3px, 7px 3px, 7px 4px, 6px 4px, 6px 5px, 4px 5px, 4px 4px, 3px 4px, 3px 3px, 2px 3px, 2px 2px, 1px 2px, 1px 1px, 0 1px); }
+  .say.above::after { bottom: -5px; left: calc(var(--tail, 10px) + 1px); width: 8px; height: 5px; clip-path: polygon(0 0, 8px 0, 8px 2px, 7px 2px, 7px 3px, 6px 3px, 6px 4px, 5px 4px, 5px 5px, 3px 5px, 3px 4px, 2px 4px, 2px 3px, 1px 3px, 1px 2px, 0 2px); }
+  .say.right::before { left: -6px; top: calc(50% - 5px); width: 5px; height: 10px; clip-path: polygon(0 4px, 0 6px, 1px 6px, 1px 7px, 2px 7px, 2px 8px, 3px 8px, 3px 9px, 4px 9px, 4px 10px, 5px 10px, 5px 0, 4px 0, 4px 1px, 3px 1px, 3px 2px, 2px 2px, 2px 3px, 1px 3px, 1px 4px); }
+  .say.right::after { left: -5px; top: calc(50% - 4px); width: 5px; height: 8px; clip-path: polygon(0 3px, 0 5px, 1px 5px, 1px 6px, 2px 6px, 2px 7px, 3px 7px, 3px 8px, 5px 8px, 5px 0, 3px 0, 3px 1px, 2px 1px, 2px 2px, 1px 2px, 1px 3px); }
+  .say .signal { display: flex; margin: 8px 0 0; }
+  .say .beats { margin-left: 8px; vertical-align: 2px; }
+  @media (prefers-reduced-motion: reduce) { .say { transition: none; } }
+
+  /* Tengo una duda: botón fijo junto a los puntos y panel lateral que se superpone (no mueve el slide) */
+  .doubt-btn {
+    --bd: var(--line); position: relative; display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 16px;
+    margin-right: 24px; background: var(--bg); border: 1px solid var(--bd); color: var(--ink2); cursor: pointer;
+    font: 14px/20px var(--sans); letter-spacing: .04em; white-space: nowrap;
+  }
+  .doubt-btn::before {
+    content: ""; width: 14px; height: 14px; flex: none; background: currentColor;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 7 7' shape-rendering='crispEdges'%3E%3Cpath d='M1 0h4v1H1zM0 1h1v1H0zM5 1h1v2H5zM3 3h2v1H3zM3 4h1v1H3zM3 6h1v1H3z'/%3E%3C/svg%3E") center / contain no-repeat;
+            mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 7 7' shape-rendering='crispEdges'%3E%3Cpath d='M1 0h4v1H1zM0 1h1v1H0zM5 1h1v2H5zM3 3h2v1H3zM3 4h1v1H3zM3 6h1v1H3z'/%3E%3C/svg%3E") center / contain no-repeat;
+  }
+  .doubt-btn:hover, .doubt-btn:focus-visible, .doubt-btn[aria-expanded="true"] { --bd: var(--hot); color: var(--hot); outline: none; }
+  .doubt-btn.unread::after { content: ""; position: absolute; top: -4px; right: -4px; width: 8px; height: 8px; background: var(--hot); }
+  .doubt {
+    position: fixed; z-index: 9; top: 0; right: 0; bottom: 0; width: 360px; max-width: 100vw; display: flex; flex-direction: column;
+    background: var(--bg2); border-left: 1px solid var(--line); box-shadow: -2px 0 0 #000; --under: var(--bg2);
+  }
+  .doubt[hidden] { display: none; }
+  .doubt header { display: flex; align-items: center; gap: 16px; padding: 24px; border-bottom: 1px solid var(--line); }
+  .doubt h2 { flex: 1; margin: 0; max-width: none; font: 400 18px/28px var(--serif); letter-spacing: 0; color: var(--ink); text-transform: none; }
+  .doubt .x { width: 32px; height: 32px; padding: 0; border: 0; background: none; color: var(--ink2); cursor: pointer; display: grid; place-items: center; }
+  .doubt .x::before {
+    content: ""; width: 14px; height: 14px; background: currentColor;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 7 7' shape-rendering='crispEdges'%3E%3Cpath d='M0 0h1v1H0zM1 1h1v1H1zM2 2h1v1H2zM3 3h1v1H3zM4 4h1v1H4zM5 5h1v1H5zM6 6h1v1H6zM6 0h1v1H6zM5 1h1v1H5zM4 2h1v1H4zM2 4h1v1H2zM1 5h1v1H1zM0 6h1v1H0z'/%3E%3C/svg%3E") center / contain no-repeat;
+            mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 7 7' shape-rendering='crispEdges'%3E%3Cpath d='M0 0h1v1H0zM1 1h1v1H1zM2 2h1v1H2zM3 3h1v1H3zM4 4h1v1H4zM5 5h1v1H5zM6 6h1v1H6zM6 0h1v1H6zM5 1h1v1H5zM4 2h1v1H4zM2 4h1v1H2zM1 5h1v1H1zM0 6h1v1H0z'/%3E%3C/svg%3E") center / contain no-repeat;
+  }
+  .doubt .x:hover, .doubt .x:focus-visible { color: var(--hot); outline: none; }
+  .doubt .log { flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 16px; scrollbar-width: thin; }
+  .doubt .me { align-self: flex-end; max-width: 85%; margin: 0; padding: 8px 16px; background: var(--ink); color: var(--bg); font: 14px/20px var(--sans); overflow-wrap: anywhere; }
+  .doubt .said { display: grid; grid-template-columns: auto 1fr; gap: 0 8px; align-items: start; margin: 0; padding: 8px 16px 8px 8px; border: 1px solid var(--line); border-left: 2px solid var(--hot); background: var(--bg); max-width: none; width: auto; font: inherit; }
+  .doubt .said canvas.sensei { grid-row: 1 / span 2; cursor: default; }
+  .doubt .said .who { font: 12px/16px var(--serif); letter-spacing: .16em; text-transform: uppercase; color: var(--hot); }
+  .doubt .said p { margin: 0; font: 14px/20px var(--sans); color: var(--ink); }
+  .doubt .hint, .doubt .off, .doubt .wait { margin: 0; font: 14px/20px var(--sans); color: var(--mute); }
+  .doubt .off { padding: 0 24px 24px; }
+  .doubt .wait { color: var(--ink2); font-family: var(--serif); }
+  .doubt .wait .beats { margin-left: 8px; vertical-align: 2px; }
+  .doubt .ask { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; padding: 16px 24px 24px; border-top: 1px solid var(--line); }
+  .doubt .ask[hidden] { display: none; }
+  .doubt textarea {
+    align-self: stretch; field-sizing: content; min-height: 48px; max-height: calc(6 * 20px + 28px); margin: 0; padding: 13px 16px; resize: none; overflow-y: auto;
+    background: var(--bg); color: var(--ink); border: 1px solid var(--line); font: 14px/20px var(--sans);
+  }
+  .doubt textarea::placeholder { color: var(--mute); }
+  .doubt textarea:focus { outline: none; border-color: var(--hot); }
+  .doubt .ask .signal { height: 44px; }
+</style>
+</head>
+<body>
+<div class="page">
+<header class="top seal"><canvas class="sensei" width="24" height="24" tabindex="0" role="button" title="Tócame" aria-label="Sensei: tócame para una pista"></canvas><a href="index.html" title="Volver a la sala (Esc)">Dojo</a><div class="meta">Cinturón blanco</div></header>
+
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#9a948a"/>
+    </marker>
+    <marker id="arrow-hot" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#d0432f"/>
+    </marker>
+  </defs>
+</svg>
+
+<main id="deck">
+<section class="slide cover" data-say="Add elige. Commit guarda.">
+  <canvas class="sensei big" width="24" height="24"></canvas>
+  <div class="kata">Kata 02</div>
+  <h1>Tu primer commit</h1>
+  <div class="rule"></div>
+  <p class="lead">Al acabar sabrás llevar un archivo de tu carpeta al historial, en dos pasos.</p>
+</section>
+
+<section class="slide" data-say="Tres sitios. Hoy, el del medio.">
+  <h2>Add <span class="k">elige</span>, commit guarda</h2>
+<svg class="dg" viewBox="0 0 880 96">
+  <rect class="box" x="0.5" y="0.5" width="195" height="95"/><text class="lbl l" x="16" y="37">Working tree</text><text class="note l" x="16" y="69">lo que editas</text>
+  <line class="ln" x1="196" y1="48" x2="220" y2="48" marker-end="url(#arrow)"/>
+  <rect class="box hot" x="228.5" y="0.5" width="195" height="95"/><text class="lbl l" x="244" y="37">Staging</text><text class="note l" x="244" y="69">git add: lo que entrará</text>
+  <line class="ln" x1="424" y1="48" x2="448" y2="48" marker-end="url(#arrow)"/>
+  <rect class="box" x="456.5" y="0.5" width="195" height="95"/><text class="lbl l" x="472" y="37">Commit</text><text class="note l" x="472" y="69">git commit: la foto</text>
+  <line class="ln" x1="652" y1="48" x2="676" y2="48" marker-end="url(#arrow)"/>
+  <rect class="box" x="684.5" y="0.5" width="195" height="95"/><text class="lbl l" x="700" y="37">Historial</text><text class="note l" x="700" y="69">git log la enseña</text>
+</svg>
+  <p class="lead">Staging es la lista de lo que entrará en el próximo commit. Nada llega al historial hasta el commit.</p>
+</section>
+
+<section class="slide do" data-say="Dos pasos y una foto." data-hints="notas.txt sale primero como Untracked files|Tras add, mira el título verde de git status|Sin -m, Git abre un editor: escribe el mensaje, guarda y cierra">
+  <h2>Haz</h2>
+  <ol class="steps">
+      <li>Crea <code>notas.txt</code> con una línea.</li>
+      <li><code>git status</code>: ¿en qué título sale?</li>
+      <li><code>git add notas.txt</code> y otra vez <code>git status</code>.</li>
+      <li><code>git commit -m "primera nota"</code>.</li>
+      <li><code>git log --oneline</code>.</li>
+      <li>Pulsa «Ya lo hice».</li>
+  </ol>
+</section>
+
+<section class="slide prove" data-say="Tres preguntas. Las acabas de vivir.">
+  <h2>Demuestra</h2>
+  <p class="dim">Una pregunta cada vez. El sensei corrige aquí.</p>
+  <ol class="qs">
+    <li>¿Qué comando pasa <code>notas.txt</code> a staging?</li>
+    <li>¿Qué título usa <code>git status</code> para lo que está en staging?</li>
+    <li>Tras <code>git add</code>, ¿el archivo ya está en el historial?</li>
+  </ol>
+</section>
+
+<section class="slide cover" data-say="Ya tienes pasado. Mañana lo leemos.">
+  <canvas class="sensei big" width="24" height="24"></canvas>
+  <div class="kata">Cierre</div>
+  <h1>Tu primer commit está en el historial.</h1>
+  <div class="rule"></div>
+  <p class="lead dim">Próxima: leer el historial sin perderte.</p>
+</section>
+</main>
+
+<nav class="nav" aria-label="Diapositivas">
+  <button class="arrow prev" id="prev" aria-label="Anterior" title="Anterior (←)"><svg viewBox="0 0 8 12" aria-hidden="true"><path d="M6 0h2v1H6zM5 1h2v1H5zM4 2h2v1H4zM3 3h2v1H3zM2 4h2v1H2zM1 5h2v1H1zM1 6h2v1H1zM2 7h2v1H2zM3 8h2v1H3zM4 9h2v1H4zM5 10h2v1H5zM6 11h2v1H6z"/></svg></button>
+  <div class="dots" id="dots"></div>
+  <span class="count" id="count"></span>
+  <button class="arrow next" id="next" aria-label="Siguiente" title="Siguiente (→)"><svg viewBox="0 0 8 12" aria-hidden="true"><path d="M0 0h2v1H0zM1 1h2v1H1zM2 2h2v1H2zM3 3h2v1H3zM4 4h2v1H4zM5 5h2v1H5zM5 6h2v1H5zM4 7h2v1H4zM3 8h2v1H3zM2 9h2v1H2zM1 10h2v1H1zM0 11h2v1H0z"/></svg></button>
+</nav>
+</div>
+
+<script>
+/* Sensei: mascota pixel 24×24 y su bocadillo. Humor en data-mood: normal | focused | happy | surprised |
+   sleepy | think (pupilas arriba a un lado) | point (mira fijo a data-look: right o down).
+   data-size fija el tamaño; data-fixed lo deja fuera de los cambios de humor globales. */
+(function () {
+  var P = { hood: '#1c1c21', hood2: '#2a2a30', face: '#0a0a0b', band: '#d0432f', eye: '#e9e4d8', pupil: '#0a0a0b', lid: '#9a948a' };
+  var rm = matchMedia('(prefers-reduced-motion: reduce)').matches, mx = null, my = null, all = [];
+  var lookUntil = 0, sayTimer = 0, anchor = null, bubble = document.createElement('div'), pinned = false;
+  document.addEventListener('mousemove', function (e) { mx = e.clientX; my = e.clientY; att.moved = performance.now(); });
+  /* escala entera de píxel físico: los 24 px lógicos nunca se reparten desiguales */
+  function fit(cv) {
+    var d = devicePixelRatio || 1, want = +cv.dataset.size || (cv.classList.contains('big') ? 144 : 24);
+    var px = Math.max(1, Math.round(want * d / 24)) * 24 / d + 'px';
+    cv.style.width = px; cv.style.height = px; cv.style.setProperty('--s', px);
+  }
+  /* Atención: una sola mirada para todas las caras de la página, con carácter. No sigue el ratón
+     1:1: se fija en él con retardo (250-500 ms) cuando se ha movido más de 120 px desde la última
+     vez, lo mira 1,5-3 s y vuelve al frente (de un lado al otro pasa por el frente). Con el ratón
+     quieto, miradas propias cada 6-12 s (1 de cada 3 hacia el ratón, a veces con parpadeo doble).
+     Mira la caja donde escribes y al frente cuando habla. think, sleepy y point no atienden al
+     ratón; focused, la mitad de veces (240 px). Con reduced-motion, siempre al frente. */
+  var att = { gx: 0, gy: 0, until: 0, wait: 0, lx: null, ly: null, moved: 0, idle: 0, blink: -1, step: null, stepAt: 0 };
+  function rnd(a, b) { return a + Math.random() * (b - a); }
+  function dirTo(px, py) {
+    var c = target();
+    if (!c) return [0, 0];
+    var r = c.getBoundingClientRect(), dx = px - r.left - r.width / 2, dy = py - r.top - r.height / 2, near = Math.max(48, r.width);
+    return [dx > near ? 1 : dx < -near ? -1 : 0, dy > near ? 1 : dy < -near ? -1 : 0];
+  }
+  function gaze(d, now) {
+    if (att.gx && d[0] === -att.gx) { att.step = d; att.stepAt = now + 140; att.gx = att.gy = 0; return; }
+    att.gx = d[0]; att.gy = d[1];
+  }
+  function attend(now) {
+    var seal = document.querySelector('.seal canvas.sensei'), m = seal ? seal.dataset.mood || 'normal' : 'normal';
+    var f = document.activeElement, box = f && f.matches && f.matches('textarea, input') && !bubble.contains(f) ? f : null;
+    if (rm || bubble.classList.contains('on') || m === 'think' || m === 'sleepy' || m === 'point' || m === 'write') {
+      att.gx = att.gy = 0; att.until = att.wait = 0; att.step = null; return;
+    }
+    if (box) {
+      var b = box.getBoundingClientRect(), d = dirTo(b.left + b.width / 2, b.top + b.height / 2);
+      att.gx = d[0]; att.gy = d[1]; att.until = att.wait = 0; att.step = null; return;
+    }
+    if (att.step) { if (now >= att.stepAt) { att.gx = att.step[0]; att.gy = att.step[1]; att.step = null; } return; }
+    if (att.until) { if (now >= att.until) { att.until = 0; gaze([0, 0], now); att.idle = now + rnd(6000, 12000); } return; }
+    if (att.wait) {
+      if (now >= att.wait) { att.wait = 0; att.lx = mx; att.ly = my; gaze(dirTo(mx, my), now); att.until = now + rnd(1500, 3000); }
+      return;
+    }
+    if (mx !== null && (att.lx === null || Math.hypot(mx - att.lx, my - att.ly) > (m === 'focused' ? 240 : 120))) { att.wait = now + rnd(250, 500); return; }
+    if (!att.idle) att.idle = now + rnd(6000, 12000);
+    if (now >= att.idle && now - att.moved > 1500) {
+      gaze(mx !== null && Math.random() < 1 / 3 ? dirTo(mx, my) : [Math.random() < .5 ? -1 : 1, 0], now);
+      att.until = now + rnd(600, 1000);
+      if (Math.random() < .4) att.blink = now;
+    }
+  }
+  window.senseiGaze = function () { return [att.gx, att.gy]; };
+  function draw(cv, t) {
+    var x = cv.getContext('2d'), m = cv.dataset.mood || 'normal', s = t / 1000 + cv.__seed;
+    function r(a, b, w, h, c) { x.fillStyle = c; x.fillRect(a, b, w, h); }
+    var bow = cv.__bowUntil > t, bob = rm || bow || Math.sin(s * 1.6) > 0 ? 0 : 1;
+    /* todas las caras parpadean y miran a la vez: una sola atención */
+    var blink = !rm && (t / 1000 % 4.2 > 4.05 || (att.blink >= 0 && t - att.blink < 360 && (t - att.blink) % 240 < 120));
+    var wind = !rm && s % 1.4 > .7, gx = att.gx, gy = att.gy;
+    if (lookUntil > t) gx = Math.floor(t / 600) % 2 ? 1 : -1;
+    if (m === 'sleepy') gx = gy = 0;
+    x.clearRect(0, 0, 24, 24);
+    var y = 2 + bob + (bow ? 2 : 0) + (m === 'write' ? 1 : 0), tail = bow ? -1 : 0;  // al escribir se inclina
+    r(bob ? 6 : 7, 22, bob ? 12 : 10, 1, '#141416');
+    r(7, y, 10, 1, P.hood); r(5, y + 1, 14, 1, P.hood); r(4, y + 2, 16, 14, P.hood);
+    r(5, y + 16, 14, 1, P.hood); r(7, y + 17, 10, 1, P.hood);
+    r(7, y + 1, 4, 1, P.hood2); r(5, y + 2, 2, 1, P.hood2); r(5, y + 3, 1, 1, P.hood2);
+    r(4, y + 4, 16, 2, P.band); r(20, y + 4 + tail, 1, 2, P.band);
+    r(21, y + 5 + tail, 1, 1, P.band); r(22, y + tail + (wind ? 5 : 6), 1, 1, P.band);
+    r(7, y + 7, 10, 1, P.face); r(6, y + 8, 12, 4, P.face); r(7, y + 12, 10, 1, P.face);
+    if (m === 'sleepy' && (rm || s % 2.4 > 1.2)) { r(19, 0, 4, 1, P.lid); r(21, 1, 1, 1, P.lid); r(20, 2, 1, 1, P.lid); r(19, 3, 4, 1, P.lid); }
+    for (var i = 0; i < 2; i++) {
+      var ex = i ? 13 : 7, ey = y + 8, cx = ex + 1 + gx;
+      if (m === 'happy' || bow) { r(ex + 1, ey, 2, 1, P.eye); r(ex, ey + 1, 1, 1, P.eye); r(ex + 3, ey + 1, 1, 1, P.eye); continue; }
+      if (blink) { r(cx, ey + 2, 2, 1, P.lid); continue; }
+      if (m === 'surprised') { r(ex, ey - 1, 4, 4, P.eye); r(ex + 1, ey, 2, 2, P.pupil); continue; }
+      if (m === 'think') { r(ex + 2, ey, 2, 2, P.eye); continue; }
+      if (m === 'point') {
+        var down = cv.dataset.look === 'down', lx = lookUntil > t ? gx : down ? -1 : 1;
+        r(ex + 1 + lx, ey + (down ? 1 : 0), 2, 3, P.eye); continue;
+      }
+      if (m === 'write') { r(ex + 1, ey + 2, 2, 1, P.eye); continue; }
+      if (m === 'focused') { r(ex, ey, 4, 1, P.lid); r(cx, ey + 1, 2, 2, P.eye); continue; }
+      if (m === 'sleepy') { r(ex, ey + 1, 4, 1, P.lid); r(cx, ey + 2, 2, 1, P.eye); continue; }
+      r(cx, ey + gy, 2, 3, P.eye);
+    }
+    /* escribiendo: cabeza inclinada sobre un papel claro; la tinta avanza a trazos en dos líneas
+       (100 ms por píxel: una página = 3 s, el mínimo visible), el pincel la sigue y al llenar la página vuelve a empezar */
+    if (m === 'write') {
+      if (cv.__wm !== 'write') cv.__w0 = t;  // cada vez que empieza a escribir, la página empieza en blanco
+      var n = rm ? 20 : Math.floor((t - cv.__w0) / 100) % 30, bx = n < 14 ? 5 + n : n < 24 ? n - 9 : 19, by = n < 14 ? 20 : 21;
+      r(4, 19, 16, 4, P.eye); r(4, 23, 16, 1, P.lid);  // el papel, del ancho del capuchón: cae en el eje
+      for (var q = 0; q < 14; q++) {
+        if (q % 3 === 2) continue;  // huecos: se leen como caracteres
+        if (q < n) r(5 + q, 20, 1, 1, P.face);
+        if (q < n - 14 && q < 10) r(5 + q, 21, 1, 1, P.face);
+      }
+      r(bx, by, 1, 1, P.band); r(bx + 1, by - 1, 1, 1, '#c9a46a'); r(bx + 2, by - 2, 1, 1, '#c9a46a'); r(bx + 3, by - 3, 1, 1, '#c9a46a');
+    }
+    cv.__wm = m;
+  }
+  function touch(e) {
+    e.preventDefault(); e.stopPropagation();
+    if (window.onSenseiTouch) window.onSenseiTouch();
+  }
+  function scan() {
+    all = Array.prototype.slice.call(document.querySelectorAll('canvas.sensei'));
+    all.forEach(function (cv, k) {
+      if (cv.__seed === undefined) {
+        cv.__seed = k * 1.3;
+        cv.addEventListener('click', touch);
+        cv.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') touch(e); });
+      }
+      fit(cv);
+    });
+  }
+  /* el bocadillo sale junto al Sensei grande visible; si no, encima del Sensei del canal (en la
+     franja entre la barra y el título, sin tapar contenido); si no, bajo el de la marca */
+  function visible(c) { var r = c.getBoundingClientRect(); return r.width && r.bottom > 0 && r.top < innerHeight; }
+  function target() {
+    var big = all.filter(function (c) { return c.classList.contains('big') && visible(c); }).pop();
+    var perch = all.filter(function (c) { return c.classList.contains('perch') && visible(c); })[0];
+    return big || perch || document.querySelector('.seal canvas.sensei') || all[0];
+  }
+  function place() {
+    if (!anchor || !anchor.getClientRects().length) return hide();
+    var r = anchor.getBoundingClientRect(), hood = r.left + r.width / 6;  // el capuchón empieza en la columna 4 de 24
+    var side = anchor.classList.contains('big') && innerWidth - r.right > 220, h = bubble.offsetHeight;
+    var up = !side && anchor.classList.contains('perch') && r.top - 16 - h >= 72;
+    var left = side ? r.right + 16 : Math.max(8, Math.min(hood, innerWidth - 16 - Math.min(320, innerWidth - 32)));
+    bubble.className = 'say on ' + (side ? 'right' : up ? 'above' : 'below');
+    bubble.style.maxWidth = Math.min(480, innerWidth - left - 16) + 'px';
+    bubble.style.setProperty('--tail', Math.max(6, Math.round(r.left + r.width / 2 - left - 5)) + 'px');  // la cola apunta al Sensei
+    bubble.style.left = left + 'px';
+    bubble.style.top = (side ? r.top + r.height * .42 - h / 2 : up ? r.top - 16 - h : r.bottom + 10) + 'px';
+  }
+  function hide() { clearTimeout(sayTimer); anchor = null; sticky = pinned = false; deadline = 0; bubble.classList.remove('on'); }
+  function loop(t) {
+    attend(t);
+    for (var k = 0; k < all.length; k++) if (all[k].getClientRects().length) draw(all[k], t);
+    if (anchor) place();
+    requestAnimationFrame(loop);
+  }
+  var sticky = false;
+  bubble.className = 'say'; bubble.setAttribute('role', 'status');
+  bubble.addEventListener('click', function (e) { if (!pinned && !e.target.closest('button, input, textarea, a')) hide(); });
+  /* un bocadillo con formulario no se va solo: se cierra al tocar fuera */
+  document.addEventListener('pointerdown', function (e) {
+    if (sticky && !bubble.contains(e.target) && !e.target.closest('canvas.sensei')) hide();
+  });
+  document.body.appendChild(bubble);
+  scan(); addEventListener('resize', scan); requestAnimationFrame(loop);
+  window.senseiMood = function (m) { all.forEach(function (cv) { if (!cv.dataset.fixed) cv.dataset.mood = m; }); };
+  window.senseiScan = scan;
+  /* el = botón o formulario opcional bajo la frase; ms = 0 lo deja abierto hasta tocar fuera;
+     ms = -1 lo fija (no se cierra solo ni al tocar: lo cierra senseiSay(''), como "Escribiendo") */
+  /* el bocadillo dura según lo que dice: max(8 s, 2 s + 80 ms por carácter); con el ratón encima no
+     se cierra y al salir le quedan al menos 2 s. Una frase nueva sustituye a la anterior con su tiempo. */
+  var deadline = 0, last = '';
+  function readMs(text) { return Math.max(8000, 2000 + 80 * text.length); }
+  function timed(ms) { deadline = Date.now() + ms; sayTimer = setTimeout(hide, ms); }
+  bubble.addEventListener('mouseenter', function () { if (deadline) clearTimeout(sayTimer); });
+  bubble.addEventListener('mouseleave', function () { if (deadline) timed(Math.max(2000, deadline - Date.now())); });
+  window.senseiRepeat = function () { if (last) senseiSay(last); return !!last; };  // releer la última frase
+  window.senseiForget = function () { last = ''; };
+  window.senseiSay = function (text, ms, el) {
+    hide();
+    if (!text) return;
+    bubble.textContent = text;
+    if (el) bubble.appendChild(el);
+    anchor = target(); place();
+    if (ms === 0) sticky = true;
+    else if (ms === -1) pinned = true;
+    else { last = text; timed(readMs(text)); }
+  };
+  window.senseiLook = function (ms) { if (!rm) lookUntil = performance.now() + ms; };
+  window.senseiBow = function (cv) { if (cv && !rm) cv.__bowUntil = performance.now() + 500; };
+})();
+
+/* Presentación: flechas, puntos y teclado. El clic sobre el contenido no avanza. */
+(function () {
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var i = 0, last = slides.length - 1, timer = 0, sayLater = 0;
+  var count = document.getElementById('count');
+  var prev = document.getElementById('prev'), next = document.getElementById('next'), dots = document.getElementById('dots');
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function slideMood() {
+    var s = slides[i];
+    if (writeOn) return 'write';
+    if (s.dataset.mood) return s.dataset.mood;
+    if (s === prove) return pend > 0 ? 'write' : totalScore >= needed * 2 - 1 ? 'happy' : 'focused';
+    if (pend > 0 && s.querySelector('.recall')) return 'think';
+    if (s.classList.contains('do')) return 'point';
+    return i === last ? 'happy' : 'normal';
+  }
+  function mood(m, ms) {
+    clearTimeout(timer); senseiMood(m);
+    if (ms) timer = setTimeout(function () { senseiMood(slideMood()); }, ms);
+  }
+  /* lo que dice el Sensei al entrar: data-say del slide o la frase por defecto de su tipo */
+  function line(k) {
+    var s = slides[k];
+    if (s.dataset.say !== undefined) return s.dataset.say;
+    if (k === last) return 'Bien hecho.';
+    if (s.classList.contains('cover')) return 'Vamos.';
+    if (s.querySelector('.recall')) return 'Intenta antes de revelar.';
+    if (s.classList.contains('do')) return 'Tu turno. Yo espero.';
+    if (s.classList.contains('prove')) return 'Aquí no hay pistas.';
+    return '';
+  }
+  slides.forEach(function (s, k) {
+    var d = document.createElement('button');
+    d.setAttribute('aria-label', 'Diapositiva ' + (k + 1));
+    d.style.setProperty('--k', k);
+    d.addEventListener('click', function () { show(k); });
+    dots.appendChild(d);
+  });
+  function freeze(s) {
+    if (!s || !s.classList.contains('on') || s.dataset.frozen) return;
+    s.dataset.frozen = '1';
+    s.style.paddingTop = s.firstElementChild.offsetTop + 'px'; s.style.justifyContent = 'flex-start'; s.style.alignContent = 'start';  // flex y grid (split)
+  }
+  document.addEventListener('input', function (e) { freeze(e.target.closest && e.target.closest('.slide')); }, true);
+  function show(n) {
+    var from = i;
+    i = Math.max(0, Math.min(last, n));
+    slides.forEach(function (s) { if (s.dataset.frozen) { delete s.dataset.frozen; s.style.paddingTop = s.style.justifyContent = s.style.alignContent = ''; } });
+    slides.forEach(function (s, k) { s.classList.toggle('on', k === i); dots.children[k].toggleAttribute('aria-current', false); dots.children[k].classList.toggle('seen', k < i); });
+    dots.children[i].setAttribute('aria-current', 'step');
+    prev.disabled = i === 0; next.disabled = i === last;
+    count.textContent = pad(i + 1) + ' / ' + pad(slides.length);
+    try { history.replaceState(null, '', '#' + (i + 1)); } catch (e) {}
+    if (from === i && sayLater) return;
+    senseiForget(); mood(slideMood()); stage = 0;
+    clearTimeout(sayLater);
+    sayLater = setTimeout(function () {
+      senseiSay(line(i));
+      if (i === last) senseiBow(slides[i].querySelector('canvas.sensei.big'));
+    }, 250);
+  }
+  function flash(b) {
+    if (b.disabled) return;
+    b.classList.add('hit');
+    setTimeout(function () { b.classList.remove('hit'); }, 180);
+  }
+  prev.addEventListener('click', function () { show(i - 1); });
+  next.addEventListener('click', function () { show(i + 1); });
+  /* el ratón no deja el foco en la flecha: así espacio nunca pulsa dos veces */
+  document.querySelectorAll('.nav button').forEach(function (b) {
+    b.addEventListener('mousedown', function (e) { e.preventDefault(); });
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.altKey || e.ctrlKey || e.metaKey) return;
+    if (e.target.closest('textarea, input')) return;  // escribir una respuesta no pasa de slide
+    if ((e.key === ' ' || e.key === 'Enter') && e.target.closest('button, a, [role=button]')) return;
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); flash(next); show(i + 1); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); flash(prev); show(i - 1); }
+    else if (e.key === 'Home') show(0);
+    else if (e.key === 'End') show(last);
+    else if (e.key === 'Escape') { if (doubt.isOpen()) doubt.close(); else location.href = 'index.html'; }
+    else if (e.key === '?' || e.key === 'd' || e.key === 'D') { e.preventDefault(); doubt.open(); }
+  });
+  document.querySelectorAll('.reveal').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var t = document.getElementById(b.getAttribute('data-target'));
+      if (!t) return;
+      freeze(b.closest('.slide'));
+      t.classList.remove('hidden'); t.classList.add('shown'); b.classList.add('hidden');
+      mood('surprised', 1400); senseiSay('¿Lo tenías?');
+      var card = b.closest('.recall > div');
+      if (card && card.form && card.form.dataset.state !== 'graded') done(card.form, false, 'revelada');
+    });
+  });
+  /* canal web: POST /signal a scripts/serve.py (→ .dojo/signals.jsonl, lo vigila el sensei) y
+     GET /feedback (← .dojo/feedback.jsonl, lo escribe el sensei). Sin servidor (estático o
+     file://) los formularios piden responder en el chat y nada se rompe. */
+  var kata = decodeURIComponent(location.pathname.split('/').pop()).replace(/\.html$/, '');
+  var online = null, since = 0, pend = 0, fastUntil = 0, waiting = null, forms = {}, nextBtn = null, totalScore = null;
+  var prove = slides.filter(function (s) { return s.querySelector('ol.qs'); })[0];
+  var needed = prove ? prove.querySelectorAll('ol.qs > li').length : 0;
+  function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text) e.textContent = text; return e; }
+  function post(body) {
+    body.kata = kata; if (body.slide === undefined) body.slide = i + 1;
+    fastUntil = Date.now() + 120000;
+    return fetch('/signal', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+      .then(function (r) { if (!r.ok) throw r.status; setTimeout(pull, 0); setTimeout(pull, 400); });
+  }
+  function button(label, cls, onclick) {
+    var b = el('button', 'signal' + (cls ? ' ' + cls : ''), label);
+    b.type = 'button';
+    b.addEventListener('click', function (e) { e.stopPropagation(); if (!b.classList.contains('sent')) onclick(b); });
+    return b;
+  }
+  function sent(b, label) { b.disabled = true; b.textContent = label; b.classList.remove('off', 'go', 'wait', 'locked'); b.classList.add('sent'); }
+  /* esperando al sensei: texto, tres puntos pixel latiendo y sin check */
+  function busy(b, label) {
+    b.disabled = true; b.textContent = label; b.classList.remove('off', 'go', 'locked', 'sent'); b.classList.add('wait');
+    b.appendChild(el('span', 'beats')).innerHTML = '<i></i><i></i><i></i>';
+  }
+  function face(m, size) {
+    var c = el('canvas', 'sensei'); c.width = c.height = 24; c.dataset.size = size; c.dataset.mood = m; c.dataset.fixed = '1';
+    return c;
+  }
+  /* corrigiendo: spinner pixel y "Corrigiendo"; el botón mide lo mismo (ancho fijo) */
+  function loading(b) {
+    b.disabled = true; b.textContent = ''; b.classList.remove('off', 'go', 'locked', 'sent'); b.classList.add('wait');
+    b.appendChild(el('span', 'spin')).innerHTML = '<i></i><i></i><i></i><i></i>';
+    b.appendChild(document.createTextNode('Corrigiendo'));
+  }
+  /* el Sensei escribe (pose write, pincel y bocadillo fijo "Escribiendo") mientras corrige una
+     respuesta, contesta un mensaje o una petición de ayuda y prepara la siguiente kata. Se ve al menos
+     3 s (una página entera de tinta): lo que llega antes espera a ese mínimo (afterWrite) y entra al terminar. */
+  var writeOn = false, writeT0 = 0, talking = false;
+  function working() {
+    var on = pend > 0 || !!waiting || talking;
+    if (on === writeOn) return;
+    writeOn = on;
+    if (on) {
+      writeT0 = Date.now(); clearTimeout(timer); senseiMood('write');
+      var d = el('span', 'beats'); d.innerHTML = '<i></i><i></i><i></i>';
+      if (!onlyDoubt()) senseiSay('Escribiendo', -1, d);  // una duda con el panel abierto: el "Escribiendo" va en el panel
+    } else { senseiSay(''); senseiMood(slideMood()); }
+  }
+  function onlyDoubt() { return talking && pend <= 0 && !waiting && doubt && doubt.isOpen(); }
+  function afterWrite(fn) {
+    var left = writeOn ? 3000 - (Date.now() - writeT0) : 0;
+    if (left > 0) setTimeout(fn, left); else fn();
+  }
+  function failed(b, label) { b.disabled = false; b.textContent = label || 'Escribe /dojo en el chat'; b.classList.remove('go'); b.classList.add('off'); }
+  /* lo que el sensei dice por el canal queda también escrito en el slide actual */
+  function note(text, link) {
+    var s = slides[i];
+    freeze(s);
+    var n = s.querySelector('.said') || s.appendChild(el('div', 'said'));
+    n.textContent = '';
+    var seal = document.querySelector('.seal canvas.sensei');
+    n.appendChild(face(seal ? seal.dataset.mood || 'normal' : 'normal', 48)); n.appendChild(el('span', 'who', 'Sensei')); n.appendChild(el('p', '', text));
+    if (link) n.appendChild(link);
+    senseiScan();
+  }
+
+  /* coloreado en vivo para las cajas de código: un tokenizador para py, js, sql, sh, cs, cpp e ini
+     (txt, sin color). Comentarios, cadenas, números, palabras clave, tipos (empiezan en mayúscula)
+     e identificadores. SQL no distingue mayúsculas en sus palabras clave. */
+  var KW = {
+    py: 'and|as|assert|async|await|break|class|continue|def|del|elif|else|except|False|finally|for|from|global|if|import|in|is|lambda|None|nonlocal|not|or|pass|raise|return|True|try|while|with|yield|self|print',
+    js: 'async|await|break|case|catch|class|const|continue|default|delete|do|else|export|extends|false|finally|for|function|if|import|in|instanceof|let|new|null|of|return|static|super|switch|this|throw|true|try|typeof|undefined|var|void|while|yield',
+    sql: 'add|all|alter|and|as|asc|between|by|case|count|create|delete|desc|distinct|drop|else|end|exists|from|group|having|in|index|inner|insert|into|is|join|key|left|like|limit|not|null|on|or|order|outer|primary|references|right|select|set|table|then|union|update|values|when|where|with',
+    sh: 'if|then|else|elif|fi|for|in|do|done|while|case|esac|function|return|export|echo|cd|git|ls|cat|grep|mkdir|rm|cp|mv|sudo|source',
+    cs: 'abstract|base|bool|break|case|catch|class|const|continue|default|do|double|else|enum|false|float|for|foreach|get|if|in|int|internal|is|namespace|new|null|object|override|private|protected|public|readonly|return|sealed|set|static|string|struct|switch|this|throw|true|try|using|var|virtual|void|while',
+    cpp: 'auto|bool|break|case|catch|char|class|const|constexpr|continue|default|delete|do|double|else|enum|false|float|for|if|inline|int|namespace|new|nullptr|override|private|protected|public|return|static|struct|switch|template|this|throw|true|try|typename|unsigned|using|virtual|void|while|#include|#pragma|#define'
+  };
+  var NOTE = { py: '#[^\\n]*', sh: '#[^\\n]*', sql: '--[^\\n]*|\\/\\*[\\s\\S]*?(?:\\*\\/|$)' };
+  function esc(t) { return t.replace(/[&<>]/g, function (c) { return c === '&' ? '&amp;' : c === '<' ? '&lt;' : '&gt;'; }); }
+  function paint(src, lang) {
+    if (!/^(py|js|sql|sh|cs|cpp|ini)$/.test(lang)) return esc(src);
+    var ini = lang === 'ini', kw = ini ? null : new RegExp('^(?:' + KW[lang] + ')$', lang === 'sql' ? 'i' : ''), out = '', at = 0, m;
+    var re = ini ? /([;#][^\n]*)|("(?:[^"\\\n]|\\.)*"?)|(^[ \t]*\[[^\]\n]*\]?)|(\b\d[\d.]*\b)|(^[ \t]*[\w.]+(?=[ \t]*=))/gm
+                 : new RegExp('(' + (NOTE[lang] || '\\/\\/[^\\n]*|\\/\\*[\\s\\S]*?(?:\\*\\/|$)') + ')|("(?:[^"\\\\\\n]|\\\\.)*"?|\'(?:[^\'\\\\\\n]|\\\\.)*\'?|`[^`]*`?)|(\\b\\d[\\w.]*)|(#?[A-Za-z_]\\w*)', 'g');
+    while ((m = re.exec(src))) {
+      if (!m[0]) { re.lastIndex++; continue; }
+      var c = m[1] ? 'c' : m[2] ? 's' : ini ? (m[3] ? 'k' : m[4] ? 'n' : 't') : m[3] ? 'n' : kw.test(m[4]) ? 'k' : /^[A-Z]/.test(m[4]) ? 't' : 'i';
+      out += esc(src.slice(at, m.index)) + '<span class="' + c + '">' + esc(m[0]) + '</span>';
+      at = m.index + m[0].length;
+    }
+    return out + esc(src.slice(at));
+  }
+  /* responder en la página: Demuestra (answer) y tarjetas de Recuerda (recall); data-code="py|js|sql|sh|cs|cpp|ini|txt"
+     en la pregunta o tarjeta pone un editor de código en vez de la caja de una línea */
+  function answerForm(k, q, type, lang) {
+    var f = el('div', 'ans'), t = el('textarea'), b = button('Enviar', '', send), pre = null;
+    t.rows = 1; t.maxLength = lang ? 4000 : 1000; t.setAttribute('aria-label', 'Respuesta ' + q);
+    t.placeholder = lang ? 'Pega o escribe el código' : type === 'answer' ? 'Tu respuesta' : 'De memoria';
+    if (lang) {
+      f.classList.add('code'); f.lang = lang;
+      ['spellcheck', 'autocomplete', 'autocorrect', 'autocapitalize'].forEach(function (a) { t.setAttribute(a, 'off'); });
+      t.spellcheck = false;
+      pre = el('pre'); pre.setAttribute('aria-hidden', 'true');
+      var ed = el('div', 'ed'); ed.appendChild(pre); ed.appendChild(t); f.appendChild(ed);
+      f.repaint = function () {
+        if (!f.classList.contains('locked')) { pre.innerHTML = paint(t.value, lang) + (/\n$/.test(t.value) ? ' ' : ''); pre.scrollTop = t.scrollTop; return; }
+        // enviada o corregida: código completo, línea a línea con sangría colgante (sin scroll horizontal)
+        // ponytail: colorea cada línea por separado; un /* */ de varias líneas solo se tiñe en la primera.
+        pre.innerHTML = t.value ? t.value.replace(/\n$/, '').split('\n').map(function (l) {
+          return '<span class="cl" style="--i:' + l.match(/^ */)[0].length + 'ch">' + (paint(l, lang) || ' ') + '</span>';
+        }).join('') : '<span class="c">Respondida</span>';
+        pre.scrollTop = 0;
+      };
+      f.lock = function (on) { f.classList.toggle('locked', on); f.repaint(); };
+      t.addEventListener('scroll', function () { pre.scrollTop = t.scrollTop; });
+      t.addEventListener('keydown', function (e) {
+        if (e.key !== 'Tab' || e.shiftKey || e.ctrlKey || e.altKey || t.readOnly) return;
+        e.preventDefault(); t.setRangeText('  ', t.selectionStart, t.selectionEnd, 'end');
+        t.dispatchEvent(new Event('input'));
+      });
+    }
+    var fit = !CSS.supports('field-sizing', 'content');  // respaldo: el alto sigue al contenido por JS
+    t.addEventListener('input', function () {
+      if (fit) { t.style.height = 'auto'; t.style.height = t.scrollHeight + 2 + 'px'; }
+      if (lang) f.repaint();
+    });
+    t.addEventListener('keydown', function (e) { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); send(); } });
+    function send() {
+      var text = t.value.trim();
+      if (online === false) return done(f, false, 'en el chat');
+      if (f.dataset.state) return;
+      if (!text) return t.focus();
+      b.disabled = true; t.readOnly = true; if (f.lock) f.lock(true);
+      post({ type: type, slide: k + 1, q: q, text: text }).then(function () {
+        f.dataset.state = 'sent'; pend++; loading(b);
+        var g = f.nextElementSibling;
+        if (g && g.classList.contains('grade')) g.classList.add('wait');
+        working();
+      }).catch(function () { t.readOnly = false; if (f.lock) f.lock(false); failed(b, 'Responde en el chat'); });
+    }
+    if (!lang) f.appendChild(t);
+    f.appendChild(b);
+    forms[(k + 1) + ':' + q] = f;
+    return f;
+  }
+  /* una pregunta por vez (Demuestra y Recuerda): solo se ve la activa ("Pregunta 1 de 3"); al
+     corregirse o revelarse sale "Siguiente pregunta" y solo ese botón avanza (nunca solo); la hecha
+     se pliega arriba a una línea: "01 · 2 / 2 · pregunta". En la última de Demuestra el botón es
+     "Ver el total"; la última de Recuerda se queda abierta. */
+  slides.forEach(function (s, k) {
+    var items = Array.prototype.slice.call(s === prove ? s.querySelectorAll('ol.qs > li') : s.querySelectorAll('.recall > div'));
+    if (!items.length) return;
+    var seq = { items: items };
+    items.forEach(function (it, n) {
+      var f = answerForm(k, n + 1, s === prove ? 'answer' : 'recall', it.dataset.code), of = el('span', 'of', (s === prove ? 'Pregunta ' : 'Recuerda ') + (n + 1) + ' de ' + items.length);
+      f.item = it; f.seq = seq; it.form = f;
+      if (s === prove) {
+        var qt = el('span', 'qt');
+        while (it.firstChild) qt.appendChild(it.firstChild);
+        it.appendChild(of); it.appendChild(qt); it.appendChild(f); it.appendChild(el('div', 'grade'));
+      } else {
+        var tag = it.querySelector('.tag');
+        if (tag) { tag.insertBefore(document.createTextNode(' · '), tag.firstChild); tag.insertBefore(of, tag.firstChild); } else it.insertBefore(of, it.firstChild);
+        it.insertBefore(f, it.querySelector('.reveal'));
+      }
+      var more = n + 1 < items.length;
+      if (more || s === prove) it.nextBtn = it.appendChild(button(!more ? 'Ver el total' : s === prove ? 'Siguiente pregunta' : 'Siguiente tarjeta', 'go hold', function () {
+        freeze(s); step(seq, true);
+        if (!more) total(false, true);
+      }));
+      it.classList.add('later');
+    });
+    open(seq, false);
+  });
+  function open(seq, user) {
+    if (seq.items.some(function (it) { return it.classList.contains('now'); })) return;
+    var nx = seq.items.filter(function (it) { return !it.classList.contains('done'); })[0];
+    if (!nx) return;
+    nx.classList.remove('later'); nx.classList.add('now');
+    if (user) nx.form.querySelector('textarea').focus({ preventScroll: true });
+  }
+  function fold(it) {
+    var q = it.querySelector('.qt') || it.querySelector(':scope > p'), sum = it.querySelector(':scope > .sum') || it.appendChild(el('span', 'sum'));
+    it.classList.remove('now', 'later'); it.classList.add('done');
+    sum.textContent = '';
+    sum.appendChild(el('b', '', it.form.score !== undefined ? it.form.score + ' / 2' : it.label || '—'));
+    var lns = it.form.lang ? it.form.querySelector('textarea').value.trim().split('\n') : [], code = lns[0] && lns[0] + (lns.length > 1 ? ' …' : '');  // código: su primera línea
+    sum.appendChild(document.createTextNode(' · '));
+    if (code) sum.appendChild(el('code', '', code)); else sum.appendChild(document.createTextNode(q.textContent.trim().replace(/\s+/g, ' ')));
+  }
+  function step(seq, user) {
+    clearTimeout(seq.show);
+    seq.items.forEach(function (it) { if (it.classList.contains('now') && (it.form.dataset.state === 'graded' || it.label)) fold(it); });
+    open(seq, user);
+  }
+  function done(f, quiet, label) {
+    var it = f.item, seq = f.seq;
+    if (!it) return;
+    if (label && !it.label) it.label = label;
+    if (it.classList.contains('done')) return fold(it);  // corrección tardía de una ya plegada: actualiza su línea
+    if (quiet || label === 'en el chat') { fold(it); open(seq, !quiet); return; }
+    if (!it.nextBtn) return;  // la última tarjeta de Recuerda se queda abierta
+    clearTimeout(seq.show);
+    seq.show = setTimeout(function () {
+      it.nextBtn.classList.remove('hold'); it.nextBtn.focus({ preventScroll: true });
+      it.nextBtn.scrollIntoView({ block: 'nearest', behavior: rmo ? 'auto' : 'smooth' });  // que no quede bajo el pie
+    }, 700);
+  }
+  /* acertar se siente (sobrio): 2/2 pulso bermellón de 600 ms con la nota ya puesta, el
+     Sensei del título hace la reverencia y los puntos parpadean una vez; 1/2 pulso corto y Sensei
+     concentrado; 0/2 sin pulso, Sensei sorprendido y una frase que acompaña */
+  var wins = ['Limpio.', 'Eso es.', 'Sin dudar.'], lines = ['Ahora ya lo sabes. Vuelve mañana en Recuerda.', 'Casi. Mira la corrección.'];
+  var moods = ['surprised', 'focused', 'happy'], rmo = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function react(box, b, s) {
+    box.classList.remove('win', 'near'); void box.offsetWidth;
+    if (s) box.classList.add(s === 2 ? 'win' : 'near');
+    mood(moods[s], 3000);
+    senseiSay(s === 2 ? wins[Math.floor(Math.random() * wins.length)] : lines[s], 4000);
+    if (s === 2) {
+      senseiBow(slides[i].querySelector('canvas.sensei.perch') || document.querySelector('.seal canvas.sensei'));
+      dots.classList.remove('blink'); void dots.offsetWidth; dots.classList.add('blink');
+    }
+  }
+  function grade(g, quiet) {
+    /* sin slide: en vivo, la caja que espera corrección con esa q; al repintar, la de Demuestra */
+    var waitingQ = quiet ? [] : Object.keys(forms).filter(function (k) { return k.split(':')[1] == g.q && forms[k].dataset.state === 'sent'; });
+    var f = g.slide ? forms[g.slide + ':' + g.q] : forms[waitingQ[waitingQ.length - 1]] || (prove && forms[(slides.indexOf(prove) + 1) + ':' + g.q]);
+    if (!f) return;
+    var s = Math.max(0, Math.min(2, Math.round(+g.score) || 0)), t = f.querySelector('textarea');
+    if (f.dataset.state === 'sent') { pend--; working(); }
+    if (!quiet) freeze(f.closest('.slide'));
+    f.dataset.state = 'graded'; f.score = s;
+    t.readOnly = true; if (!t.value) t.placeholder = 'Respondida';
+    if (document.activeElement === t) t.blur();
+    if (f.lock) f.lock(true);  // el código queda entero, a su alto natural
+    sent(f.querySelector('button'), 'Corregida');
+    var box = f.nextElementSibling && f.nextElementSibling.classList.contains('grade') ? f.nextElementSibling : f.parentNode.insertBefore(el('div', 'grade'), f.nextSibling);
+    box.classList.remove('wait'); box.textContent = ''; box.appendChild(face(moods[s], 24));
+    var b = box.appendChild(el('b', '', s + ' / 2'));  // la nota sale directa, sin contar
+    if (g.text) box.appendChild(el('span', '', g.text));
+    box.classList.add('on'); senseiScan();
+    if (!quiet) react(box, b, s);
+    done(f, quiet);
+    total(quiet);
+  }
+  /* con las tres corregidas: total bajo la lista, flecha al cierre con un pulso y cierre abierto */
+  function total(quiet, shown) {
+    if (!prove) return;
+    var k = slides.indexOf(prove) + 1, sum = 0;
+    for (var q = 1; q <= needed; q++) {
+      var f = forms[k + ':' + q];
+      if (!f || f.dataset.state !== 'graded') return;
+      sum += f.score;
+    }
+    var p = prove.querySelector('.total'), good = sum >= needed * 2 - 1;
+    totalScore = sum; gate(true);
+    if (!quiet && !shown) return;  // en vivo, el total sale al pulsar "Ver el total"
+    p.textContent = 'Total'; p.appendChild(el('b', '', sum + ' / ' + needed * 2)); p.classList.add('on');
+    if (!quiet) {
+      p.classList.toggle('win', good);
+      mood(good ? 'happy' : 'point', 3000);
+      next.classList.add('pulse'); setTimeout(function () { next.classList.remove('pulse'); }, 3200);
+    }
+  }
+  function gate(open) {
+    if (!nextBtn || waiting || nextBtn.classList.contains('sent')) return;
+    nextBtn.disabled = !open;
+    nextBtn.textContent = open ? 'Siguiente kata' : 'Responde primero ' + (needed === 3 ? 'las tres' : 'las preguntas');
+    nextBtn.classList.toggle('go', open); nextBtn.classList.toggle('locked', !open);
+  }
+
+  /* el total tiene su hueco desde el principio; el Sensei se sienta en el canal junto al título de
+     cada slide que empieza con h2 (48 px: la altura de la primera línea) */
+  if (prove) prove.querySelector('ol.qs').insertAdjacentElement('afterend', el('p', 'total'));
+  slides.forEach(function (s) {
+    var h = s.querySelector(':scope > h2');
+    if (!h || s.classList.contains('cover') || (s.classList.contains('split') && !s.classList.contains('do'))) return;
+    var row = el('div', 'hrow'), cv = el('canvas', 'sensei perch'); cv.width = cv.height = 24; cv.dataset.size = 48;
+    if (s.classList.contains('do') || s.querySelector('svg.dg')) cv.dataset.look = 'down';
+    h.parentNode.insertBefore(row, h); row.appendChild(cv); row.appendChild(h);
+  });
+  /* diagramas a su tamaño natural: 1 unidad del viewBox = 1 px, así el texto respeta la escala */
+  document.querySelectorAll('svg.dg').forEach(function (g) { if (g.viewBox.baseVal && g.viewBox.baseVal.width) g.style.width = g.viewBox.baseVal.width + 'px'; });
+  senseiScan();
+
+  /* Ya lo hice, Siguiente kata: la página espera a que el sensei prepare la próxima (next_ready) */
+  slides.forEach(function (s, k) {
+    if (s.classList.contains('do')) s.appendChild(button('Ya lo hice', '', function (b) {
+      b.disabled = true;
+      post({ type: 'done' }).then(function () { sent(b, 'Enviado al sensei'); mood('happy', 1500); senseiSay('Bien. Ahora, Demuestra.', 5000); })
+        .catch(function () { failed(b); });
+    }));
+    if (k === last && s.classList.contains('cover')) {
+      nextBtn = s.appendChild(button('Siguiente kata', 'go', function (b) { awaitNext(b, 'next'); }));
+      if (prove) gate(false);
+    }
+  });
+  function awaitNext(b, type) {
+    b.disabled = true;
+    post({ type: type }).then(function () {
+      waiting = { b: b, t: setTimeout(nobody, 180000) };
+      busy(b, 'Preparando tu siguiente kata');
+      document.body.classList.add('waiting'); working();
+    }).catch(function () { failed(b); });
+  }
+  function stopWaiting() {
+    if (!waiting) return null;
+    var b = waiting.b;
+    clearTimeout(waiting.t); waiting = null;
+    b.classList.remove('wait'); document.body.classList.remove('waiting');
+    return b;
+  }
+  function nobody() {
+    var b = stopWaiting(), m = 'Parece que el sensei no está. Escribe /dojo en el chat.';
+    working();
+    b.disabled = false; b.textContent = 'Siguiente kata'; b.classList.add('go');
+    mood('normal'); senseiSay(m, 8000); note(m);
+  }
+  function arrive(f) {
+    var url = String(f.url || '');
+    if (!/^[\w.-]+\.html(#\d+)?$/.test(url)) return;  // solo lecciones de esta misma carpeta
+    var b = stopWaiting();
+    working();
+    if (b) sent(b, 'Vamos');
+    mood('happy'); senseiSay(f.title || 'Vamos.', 3000);
+    senseiBow(slides[i].querySelector('canvas.sensei.big') || document.querySelector('.seal canvas.sensei'));
+    setTimeout(function () { location.href = url; }, 1200);
+  }
+  function end(f) {
+    var b = stopWaiting(), text = f.text || 'Por hoy, basta.', back = el('a', 'signal go', 'Volver a la sala');
+    working();
+    if (b) sent(b, 'Sesión cerrada');
+    back.href = 'index.html';
+    mood('happy'); senseiSay(text, 8000); note(text, back);
+  }
+
+
+  /* Tengo una duda: botón fijo (tecla ? o D) y panel lateral con la conversación de esta kata.
+     Preguntar es la señal message; la respuesta llega como say. Al cargar, el historial se rehace con
+     GET /signals (los message de esta kata) y los say que llegaron desde la primera pregunta. */
+  function doubts(o) {
+    function mk(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text) e.textContent = text; return e; }
+    var btn = mk('button', 'doubt-btn', 'Tengo una duda'), panel = mk('aside', 'doubt'), head = mk('header'), cv = mk('canvas', 'sensei'), x = mk('button', 'x');
+    var log = mk('div', 'log'), off = mk('p', 'off', 'Escribe tu duda en el chat.'), form = mk('form', 'ask'), t = mk('textarea'), go = mk('button', 'signal go', 'Enviar');
+    var msgs = [], says = [], first = null, waitRow = null;
+    btn.type = 'button'; btn.title = 'Pregunta al sensei (? o D)'; btn.setAttribute('aria-expanded', 'false');
+    panel.hidden = true; panel.setAttribute('aria-label', 'Pregunta al sensei');
+    cv.width = cv.height = 24; cv.dataset.size = 48;
+    x.type = 'button'; x.setAttribute('aria-label', 'Cerrar (Esc)');
+    t.rows = 1; t.maxLength = 500; t.placeholder = 'Tu duda'; t.setAttribute('aria-label', 'Tu duda');
+    go.type = 'submit'; off.hidden = true;
+    head.appendChild(cv); head.appendChild(mk('h2', '', 'Pregunta al sensei')); head.appendChild(x);
+    form.appendChild(t); form.appendChild(go);
+    panel.appendChild(head); panel.appendChild(log); panel.appendChild(off); panel.appendChild(form);
+    o.before.parentNode.insertBefore(btn, o.before);
+    document.body.appendChild(panel);
+    function ts(v) { var n = Date.parse(v); return isNaN(n) ? Date.now() : n; }
+    function addMsg(m) { var n = ts(m.ts); msgs.push({ ts: n, text: m.text }); if (first === null || n < first) first = n; }
+    function paint() {
+      log.textContent = '';
+      var items = msgs.map(function (m) { return { ts: m.ts, me: m.text }; })
+        .concat(says)
+        .sort(function (a, b) { return a.ts - b.ts; });
+      items.forEach(function (it) {
+        if (it.me) return log.appendChild(mk('p', 'me', it.me));
+        var c = mk('div', 'said'), f = mk('canvas', 'sensei');
+        f.width = f.height = 24; f.dataset.size = 24; f.dataset.fixed = '1'; f.dataset.mood = it.mood || 'normal';
+        c.appendChild(f); c.appendChild(mk('span', 'who', 'Sensei')); c.appendChild(mk('p', '', it.text)); log.appendChild(c);
+      });
+      if (waitRow) log.appendChild(waitRow);
+      if (!log.children.length) log.appendChild(mk('p', 'hint', 'Pregunta lo que no te cuadre de esta kata. Te respondo aquí.'));
+      senseiScan(); log.scrollTop = log.scrollHeight;
+    }
+    function show(on) {
+      panel.hidden = !on; btn.setAttribute('aria-expanded', String(on));
+      if (!on) return btn.focus({ preventScroll: true });
+      btn.classList.remove('unread');
+      if (o.opened) o.opened();
+      off.hidden = o.online() !== false; form.hidden = !off.hidden;
+      paint();
+      if (!form.hidden) t.focus();
+    }
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var text = t.value.trim();
+      if (!text) return t.focus();
+      go.disabled = true;
+      o.send(text).then(function () {
+        addMsg({ text: text }); t.value = ''; go.disabled = false;
+        waitRow = mk('p', 'wait', 'Escribiendo'); waitRow.appendChild(mk('span', 'beats')).innerHTML = '<i></i><i></i><i></i>';
+        paint(); t.focus();
+      }).catch(function () { go.disabled = false; off.hidden = false; form.hidden = true; });
+    });
+    t.addEventListener('keydown', function (e) { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); form.requestSubmit(); } });
+    panel.addEventListener('keydown', function (e) { if (e.key === 'Escape') { e.stopPropagation(); show(false); } });
+    btn.addEventListener('click', function () { show(panel.hidden); });
+    x.addEventListener('click', function () { show(false); });
+    fetch('/signals?kata=' + encodeURIComponent(o.kata)).then(function (r) { if (!r.ok) throw r.status; return r.json(); })
+      .then(function (list) { list.forEach(function (m) { if (m && m.text) addMsg(m); }); if (!panel.hidden) paint(); })
+      .catch(function () {});
+    return {
+      open: function () { show(true); }, close: function () { show(false); }, isOpen: function () { return !panel.hidden; },
+      /* un say del canal duda: va solo al historial; en vivo y con el panel cerrado, punto bermellón en el botón */
+      say: function (f, live) {
+        says.push({ ts: ts(f.ts), text: f.text, mood: f.mood });
+        if (!live) return;
+        waitRow = null;
+        if (!panel.hidden) paint(); else if (msgs.length) btn.classList.add('unread');
+      }
+    };
+  }
+  var doubt = doubts({ kata: kata, before: dots, online: function () { return online; }, opened: function () { if (writeOn && onlyDoubt()) senseiSay(''); },
+    send: function (text) { return post({ type: 'message', text: text }).then(function () { talking = true; working(); }); } });
+  /* tocar al Sensei: en Haz da la siguiente pista (peldaños 1-3) y luego ofrece pedir ayuda;
+     en otro slide, ánimo (preguntar es el botón "Tengo una duda") */
+  var used = {}, helpBtn = {}, reread = {}, pool = ['Sigue.', 'Respira. Lee el slide otra vez.', 'Un paso a la vez.', 'Te sigo.'], lastPool = -1;
+  window.onSenseiTouch = function () {
+    var s = slides[i], hints = s.classList.contains('do') && s.dataset.hints ? s.dataset.hints.split('|') : null;
+    if (hints) {
+      var n = used[i] || 0;
+      var hint = function (k) { return 'Pista ' + (k + 1) + ' de ' + hints.length + ' · ' + hints[k].trim(); };
+      if (n >= hints.length && (reread[i] = !reread[i])) return senseiSay(hint(hints.length - 1));  // agotadas: un toque relee la última
+      if (n >= hints.length) {
+        helpBtn[i] = helpBtn[i] || button('Pedir ayuda al sensei', '', function (b) {
+          b.disabled = true;
+          post({ type: 'help', extra: { pistas: hints.length } })
+            .then(function () { sent(b, 'Enviado · espera aquí'); talking = true; working(); })
+            .catch(function () { failed(b); });
+        });
+        var acts = el('div', 'acts'); acts.appendChild(helpBtn[i]);
+        acts.appendChild(button('Tengo una duda', '', function () { senseiSay(''); doubt.open(); }));
+        return senseiSay('Ya no hay más pistas aquí.', online ? 0 : 12000, acts);
+      }
+      used[i] = n + 1;
+      mood('focused', 8000);
+      return senseiSay(hint(n), 8000);
+    }
+    if (senseiRepeat()) return;  // fuera del Haz, tocarlo repite lo último que dijo en este slide
+    var k;
+    do { k = Math.floor(Math.random() * pool.length); } while (k === lastPool);
+    lastPool = k; mood('happy', 1500);
+    senseiSay(pool[k]);
+  };
+
+  /* lo que escribe el sensei: lo anterior a abrir la página solo repinta correcciones */
+  function take(f, quiet) {
+    if (!f || typeof f !== 'object') return;
+    var type = f.type || (f.q ? 'grade' : 'say');
+    if (type === 'grade' && !f.q) type = 'say';
+    if (type === 'next_ready') return quiet || afterWrite(function () { arrive(f); });
+    if (type === 'end') return quiet || afterWrite(function () { end(f); });
+    if (f.kata !== kata) return;
+    if (type === 'grade') return quiet ? grade(f, true) : afterWrite(function () { grade(f, false); });
+    /* canal separado: un say con channel "duda" (respuesta a Tengo una duda o a una ayuda) va solo al
+       panel de dudas; sin channel (o "slide"), al bocadillo y la nota del slide, como siempre */
+    var duda = type === 'say' && f.text && f.channel === 'duda';
+    if (duda) return quiet ? doubt.say(f, false) : afterWrite(function () { talking = false; working(); doubt.say(f, true); });
+    if (type === 'say' && !quiet && f.text) afterWrite(function () {
+      talking = false; working();
+      if (f.mood) mood(f.mood, 4000); senseiSay(f.text, 8000); note(f.text); var fc = slides[i].querySelector('.said canvas.sensei'); if (fc && f.mood) fc.dataset.mood = f.mood;
+    });
+  }
+  function offline() {
+    Object.keys(forms).forEach(function (k) {
+      var b = forms[k].querySelector('button');
+      forms[k].querySelector('textarea').disabled = true;
+      failed(b, 'Responde en el chat');
+    });
+    gate(true);
+  }
+  /* una lectura de /feedback; nunca dos a la vez (since no se duplica). Tras un POST /signal
+     correcto se lee al momento y a los 400 ms: lo que corrige serve.py con la key llega ya */
+  var inflight = false;
+  function pull() {
+    if (inflight) return Promise.resolve();
+    inflight = true;
+    return fetch('/feedback?since=' + since).then(function (r) { if (!r.ok) throw r.status; return r.json(); })
+      .then(function (list) {
+        var first = online === null;
+        online = true; since += list.length;
+        list.forEach(function (f) { take(f, first); });
+      })
+      .catch(function () { if (online === null) { online = false; offline(); } })
+      .then(function () { inflight = false; });
+  }
+  function poll() {
+    pull().then(function () {
+        if (!online) return;
+        var s = slides[i], busy = pend > 0 || waiting || Date.now() < fastUntil;
+        // 1,5 s esperando algo; 3 s en Haz o Recuerda (el sensei puede escribir); 5 s en reposo
+        setTimeout(poll, busy ? 1500 : s.classList.contains('do') || s.querySelector('.recall') ? 3000 : 5000);
+      });
+  }
+  poll();
+  /* inquietud en Haz: a los 45 s sin tecla ni clic mira a los lados y ofrece ayuda una vez;
+     3 min después vuelve a mirar, sin hablar. ?idle=N acorta el primer plazo para probar. */
+  var idle = parseFloat(new URLSearchParams(location.search).get('idle')) || 45;
+  var again = idle + (idle === 45 ? 180 : idle * 2), quiet = Date.now(), stage = 0, offered = false;
+  ['keydown', 'pointerdown'].forEach(function (ev) {
+    document.addEventListener(ev, function () { quiet = Date.now(); }, true);
+  });
+  setInterval(function () {
+    if (!slides[i].classList.contains('do')) return;
+    var t = (Date.now() - quiet) / 1000;
+    if (stage === 0 && t >= idle) {
+      stage = 1; senseiLook(2000);
+      if (!offered) { offered = true; senseiSay('¿Atascado? Tócame.', 5000); }
+    } else if (stage === 1 && t >= again) { stage = 2; senseiLook(2000); }
+  }, 500);
+  /* sangría colgante: si una línea de código no cabe, continúa bajo su propio nivel */
+  document.querySelectorAll('pre').forEach(function (p) {
+    var c = p.querySelector('code') || p, lang = p.dataset.code;
+    if (p.closest('.ed')) return;
+    if (lang) {  // <pre data-code="py">: el tokenizador de las cajas, línea a línea (sin scroll horizontal)
+      c.innerHTML = c.textContent.replace(/^\n+|\s+$/g, '').split('\n').map(function (l) {
+        return '<span class="cl" style="--i:' + l.match(/^ */)[0].length + 'ch">' + (paint(l, lang) || ' ') + '</span>';
+      }).join('');
+      return;
+    }
+    // ponytail: corta el HTML por saltos de línea; una etiqueta que cruce líneas se cerraría sola.
+    c.innerHTML = c.innerHTML.split('\n').map(function (l) {
+      return '<span class="cl" style="--i:' + l.match(/^ */)[0].length + 'ch">' + (l || ' ') + '</span>';
+    }).join('');
+  });
+  document.querySelectorAll('.split .steps li[data-lines]').forEach(function (li) {
+    var m = li.dataset.lines.match(/^(?:(\d+):)?(\d+)(?:-(\d+))?$/);
+    if (!m) return;
+    var fig = li.closest('.slide').querySelectorAll('.code pre')[(+m[1] || 1) - 1];
+    if (!fig) return;
+    var lines = Array.prototype.slice.call(fig.querySelectorAll('.cl'), m[2] - 1, +(m[3] || m[2]));
+    function lit(on) { lines.forEach(function (l) { l.classList.toggle('lit', on); }); }
+    li.addEventListener('mouseenter', function () { lit(true); });
+    li.addEventListener('mouseleave', function () { lit(false); });
+  });
+  /* dojoGrid() en la consola: lista lo que no cae en el eje de su slide, tarjeta o columna (±1 px) */
+  window.dojoGrid = function () {
+    var bad = [];
+    slides.forEach(function (s, k) {
+      var on = s.classList.contains('on');
+      s.classList.add('on');
+      s.querySelectorAll('h1, h2, h3, p, ol, li, .ans, .grade, .total, .said, pre, svg.dg, .reveal, .signal, .kata, .rule, div.recall > div').forEach(function (e) {
+        if (!e.getClientRects().length || e.parentElement.closest('.said, .grade, .ans, .total')) return;
+        var box = e.parentElement.closest('.recall > div, .split > div:not(.hrow)') || s;
+        var ref = box === s ? s.querySelector(':scope > h1, :scope > h2, :scope > .hrow > h2, :scope > h3') : box.querySelector(':scope > p, :scope > h3') || box.firstElementChild;
+        var d = Math.round(e.getBoundingClientRect().left - ref.getBoundingClientRect().left);
+        if (Math.abs(d) > 1) bad.push((k + 1) + ' ' + e.tagName.toLowerCase() + (e.className && e.className.baseVal === undefined ? '.' + e.className.split(' ')[0] : '') + ' ' + d + 'px');
+      });
+      if (!on) s.classList.remove('on');
+    });
+    return bad;
+  };
+  function fromHash() {
+    var h = parseInt((location.hash || '').replace('#', ''), 10);
+    show(isNaN(h) ? 0 : h - 1);
+  }
+  window.addEventListener('hashchange', fromHash);
+  fromHash();
+})();
+</script>
+</body>
+</html>
