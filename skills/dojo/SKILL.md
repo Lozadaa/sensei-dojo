@@ -207,7 +207,7 @@ Escribe estado con fechas absolutas (AAAA-MM-DD). Nunca borres JOURNAL; solo añ
 - `scripts/serve.py <.dojo/lessons>`: servidor de las lecciones (puerto 8766) y canal
   con la presentación: `POST /signal` → signals.jsonl, `GET /feedback` ← feedback.jsonl,
   `GET /status` (¿late el vigilante?).
-- `scripts/vigila.py <.dojo>`: el vigilante del Monitor; imprime las señales y late en `.dojo/sensei.alive`.
+- `scripts/vigila.py <.dojo>`: el vigilante del Monitor; imprime las señales y late en `sensei.alive` (en `.dojo/`).
 - `scripts/idioma.py`: la interfaz en el idioma de DOJO.md (es, en); refresh.py y mapa.py la aplican.
 
 ## Si algo falla (troubleshooting)
