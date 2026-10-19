@@ -3,8 +3,7 @@
 Uso: python docs/sensei_gif.py      (necesita playwright con Chromium y Pillow)
 
 Ejecuta el draw() de la plantilla, sin tocarlo, en Chromium headless, frame a frame cada
-100 ms, y escala cada píxel ×8 (×4 en las poses) sin suavizado. Escribe docs/sensei.gif
-(la secuencia completa) y docs/pose-<nombre>.gif (una por pose).
+100 ms, y escala cada píxel ×8 sin suavizado. Escribe docs/sensei.gif.
 """
 import re
 from pathlib import Path
@@ -42,9 +41,6 @@ SHOW = [
     ("point", 1100, {"look": "right"}), ("point", 1100, {"look": "down"}),
     ("normal", 800, {}),
 ]
-POSES = {"normal": [("normal", 2400, {}), ("normal", 600, {"gx": 1})], "happy": [("happy", 2400, {})],
-         "write": [("write", 3000, {})], "bow": [("bow", 1500, {"mood": "normal", "bow": True}), ("normal", 900, {})],
-         "point": [("point", 1200, {"look": "right"}), ("point", 1200, {"look": "down"})]}
 
 
 def frames(page, seq):
@@ -78,6 +74,4 @@ with sync_playwright() as p:
     page = browser.new_page()
     page.set_content(PAGE)
     save(frames(page, SHOW), ROOT / "docs/sensei.gif", 8, 4)
-    for name, seq in POSES.items():
-        save(frames(page, seq), ROOT / f"docs/pose-{name}.gif", 4, 2)
     browser.close()
