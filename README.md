@@ -36,7 +36,7 @@ A partir de ahí, cada `/dojo` es una kata: un concepto, una presentación HTML 
 
 ## Lo que lo hace distinto
 
-| | |
+| Qué | Cómo |
 |---|---|
 | 🥋 **Katas de 15-20 min** | Un concepto por kata, como mucho 8 slides: Recuerda → Dónde estamos → La idea → Lado a lado → Predice → **Haz** → **Demuestra** → Cierre. |
 | 🎯 **Preguntas deterministas** | Solo preguntas con una respuesta comprobable: un comando, una tecla, un texto que aparece en pantalla. Nunca «¿qué te pareció?». |
@@ -101,28 +101,24 @@ También se activa sin el comando: «enséñame…», «quiero aprender…», «
 ## Cómo funciona
 
 ```mermaid
-flowchart LR
-    subgraph web["La kata en el navegador"]
-      P["Presentación HTML<br/>Haz · Demuestra · Tengo una duda"]
+sequenceDiagram
+    autonumber
+    participant P as Kata en el navegador
+    participant S as serve.py
+    participant D as .dojo/
+    participant C as Claude (el sensei)
+    P->>S: POST /signal · tu respuesta, una duda, «Siguiente kata»
+    alt la respuesta está en la hoja de respuestas
+        S->>D: feedback.jsonl · grade al instante, sin IA
+    else respuesta imprevista, duda o siguiente kata
+        S->>D: signals.jsonl
+        D-->>C: Monitor sobre signals.jsonl
+        C->>D: feedback.jsonl · grade, say o next_ready
     end
-    subgraph local["serve.py · stdlib"]
-      K{"¿Está en la<br/>hoja de respuestas?"}
-    end
-    subgraph dojo[".dojo/"]
-      S[("signals.jsonl")]
-      F[("feedback.jsonl")]
-      M["PROGRESS · JOURNAL<br/>REFUERZO · DUDAS"]
-    end
-    C(["Claude, el sensei<br/>Monitor sobre signals"])
-
-    P -- "POST /signal" --> K
-    K -- "sí: corrige al instante" --> F
-    K -- "no: la deja" --> S
-    S --> C
-    C -- "grade · say · next_ready" --> F
-    F -- "GET /feedback" --> P
-    C -- "GUARDAR" --> M
-    M -- "refresh.py · mapa.py" --> P
+    P->>S: GET /feedback
+    S-->>P: la nota bajo la pregunta, el bocadillo o la kata nueva
+    C->>D: GUARDAR · PROGRESS, REFUERZO, JOURNAL, DUDAS
+    C->>P: refresh.py y mapa.py rehacen la sala y el mapa
 ```
 
 Una kata pasa por cinco momentos:
