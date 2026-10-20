@@ -41,10 +41,13 @@ sensei, aprendiz) con naturalidad, sin convertirlo en disfraz.
 3. Existe     → lee DOJO.md, PROGRESS.md, REFUERZO.md (lagunas abiertas) y las
                 últimas 2 entradas de JOURNAL.md, decide el MODO y arranca la kata.
                 No pidas permiso para empezar.
-4. Canal web  → arranca scripts/serve.py si no corre, arma el Monitor sobre
-                .dojo/signals.jsonl y abre la sala: la web dirige y el chat solo informa en
-                una línea. Antes, atiende las señales posteriores a `Señales hasta` de la
-                última entrada de JOURNAL (leccion.md § Canal web).
+4. Canal web  → arranca scripts/serve.py si no corre, arma SIEMPRE el vigilante
+                (Monitor con scripts/vigila.py, 30 min) y abre la sala: la web dirige y el
+                chat solo informa en una línea. Antes, atiende las señales posteriores a
+                `Señales hasta` de la última entrada de JOURNAL (leccion.md § Canal web).
+                Rearma el vigilante al expirar mientras lleguen señales; tras 60 minutos sin
+                ninguna (dos Monitor seguidos sin eventos) lo dejas apagado, guardas lo
+                pendiente y lo dices en una línea: el siguiente /dojo lo arma de nuevo.
 ```
 
 Argumentos tras `/dojo` (todos opcionales):
@@ -75,11 +78,21 @@ Argumentos tras `/dojo` (todos opcionales):
    resto solo títulos). Fija en DOJO.md la línea
    `Meta → conceptos` (3-6 anclas del curriculum que cumplen su meta): de ella sale el
    camino del mapa.
-4. Abre la sala (`index.html`, que ya enseña por qué toca lo que toca y el botón «Ver el
-   mapa») en el navegador sin que lo pida: panel integrado
-   (`show_pane preview`) y navegador del sistema (`Start-Process` / `open`). Lo mismo
-   en cada `/dojo` posterior: el aprendiz nunca tiene que buscar la URL.
-5. Lanza la primera kata en el mismo turno. El aprendiz no debe esperar.
+4. Pon en marcha el canal, en este orden y en el mismo turno:
+   a. Arranca `scripts/serve.py` si no responde en 8766.
+   b. **Arma el vigilante** (Monitor con `scripts/vigila.py`, 30 min): es lo que pone
+      «Sensei conectado» en la página y lo que hace llegar las respuestas del aprendiz.
+   c. Abre la sala (`index.html`, que ya enseña por qué toca lo que toca y el botón «Ver
+      el mapa») en el navegador sin que lo pida: panel integrado (`show_pane preview`) y
+      navegador del sistema (`Start-Process` / `open`).
+   Lo mismo en cada `/dojo` posterior: el aprendiz nunca tiene que buscar la URL ni
+   pedirte que conectes al sensei. Sin vigilante, la página dice «Sensei desconectado».
+   Solo se apaga por inactividad (leccion.md § Vigilante), nunca antes.
+5. Lanza la primera kata en el mismo turno, con el vigilante ya escuchando. El aprendiz
+   no debe esperar.
+
+Orden completo de la primera vez: crear `.dojo/` → arrancar `serve.py` → armar el
+vigilante → abrir la sala → primera kata.
 
 ### Modo de sesión
 
@@ -110,7 +123,9 @@ CANAL       Mientras la kata esté abierta, Monitor con scripts/vigila.py (lee s
             § Canal web): answer/recall → grade · message/help → say con channel duda · done → say que
             invita a Demuestra (la key si trae done; si no, tú) · next/continue → GUARDAR, construir la siguiente kata (o el
             repaso que toque) y next_ready con su url · cerrar por adaptación → end.
-            Rearma el Monitor al expirar y relee las señales no atendidas. Una señal con
+            Rearma el Monitor al expirar y relee las señales no atendidas; si lleva 60 minutos
+            sin señales (dos expiraciones vacías), no lo rearmes: guarda, escribe «Señales
+            hasta» y retírate en una línea (el próximo /dojo lo arma). Una señal con
             "graded" o "handled" ya la resolvió la key: no la corrijas ni repitas next_ready;
             anótala en JOURNAL al guardar (y tras un next resuelto, prepara la kata siguiente). Una duda
             (message, botón "Tengo una duda") se responde con say ≤ 140 caracteres y SIEMPRE

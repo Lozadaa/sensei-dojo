@@ -465,8 +465,11 @@ Monitor  command: python "<skill>/scripts/vigila.py" .dojo
 Cada línea es una señal: contesta según la tabla escribiendo en `feedback.jsonl`, sin
 esperar mensajes del chat y sin escribir en el chat más que una línea de estado si hace
 falta. Al expirar, lee las líneas con `ts` posterior a la última atendida, atiéndelas y
-rearma, mientras haya una kata o la sala abierta. Si no hay Monitor, el aprendiz escribirá
-en el chat.
+rearma mientras lleguen señales. **Se arma siempre al invocar `/dojo` y al crear el dojo**,
+haya o no kata abierta. **Se apaga solo tras una hora sin señales**: si dos Monitor seguidos
+expiran sin eventos, no lo rearmes; guarda lo pendiente, escribe `Señales hasta` en JOURNAL
+y dilo en una línea. La página pasará a «Sensei desconectado», y el aprendiz sabe que
+`/dojo` lo despierta. Si no hay Monitor, el aprendiz escribirá en el chat.
 
 `vigila.py` imprime cada señal nueva (como `tail -n0 -F`) y además toca `.dojo/sensei.alive`
 cada 2 s. `serve.py` lo publica en `GET /status` y la página lo comprueba cada 10 s: con

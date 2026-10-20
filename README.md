@@ -45,7 +45,7 @@ Git, SQL, Python, JavaScript, Blender, a game engine: any domain works.
 | **Spaced repetition** | Mastered concepts come back after 3, 7, 21 and 60 days. Anything you missed returns as a "recall" card until you get it right on two different days. |
 | **"I have a question" panel** | Ask without leaving the kata. Your questions are logged and shape the next katas: confusing topics get revisited before moving on. |
 | **Skill map** | Your curriculum as a skill tree: what you've mastered, where you are, the path to your goal, and why this kata comes next. |
-| **Knows if the sensei is listening** | The page shows when the sensei is connected. If not, the Sensei’s eyes turn to X . X and the label tells you to type `/dojo` to bring it back. |
+| **Knows if the sensei is listening** | `/dojo` connects the sensei to the page automatically, from the very first session. After an hour with no activity it steps away: the Sensei’s eyes turn to X . X and the label tells you to type `/dojo` to bring it back. |
 | **Hint ladder** | Where to look, what to look for, almost the answer, the answer. It never jumps straight to the end. |
 | **Adapts quietly** | Harder or easier based on how you do, without asking. Tired? It wraps up with a win and saves. |
 
