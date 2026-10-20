@@ -92,7 +92,7 @@ def main():
     folder = Path(args[0])
     lang = idioma.lang_of(folder.parent)
     shell = idioma.localize((ASSETS / "plantilla.html").read_text(encoding="utf-8"), "plantilla.html", lang)
-    for p in sorted(folder.glob("[0-9][0-9][0-9]-*.html")):
+    for p in sorted(folder.glob("[0-9][0-9][0-9]*-*.html")):  # 003-… y las de reparación 003b-…
         lesson(p, shell)
     if (folder / "index.html").exists():
         index(folder / "index.html", idioma.localize((ASSETS / "index.html").read_text(encoding="utf-8"), "index.html", lang), saludo)
